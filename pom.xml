@@ -14,7 +14,7 @@
         <url>https://www.atlassian.com/</url>
     </organization>
 
-    <name>integration</name>
+    <name>Microsoft Teams for Jira Server</name>
     <description>The ultimate Microsoft Teams integration for Jira Server. Microsoft Teams Integration is required to use Jira Server app for Microsoft Teams.</description>
     <packaging>atlassian-plugin</packaging>
 

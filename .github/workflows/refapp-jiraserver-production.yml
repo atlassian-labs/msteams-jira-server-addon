@@ -31,10 +31,6 @@ jobs:
         with:
           args: ed --inplace -d "/atlassian-plugin/servlet[@key='test']" src/main/resources/atlassian-plugin.xml
 
-      - name: Get current date
-        id: date
-        run: echo "::set-output name=date::$(date +'%Y.%m.%d')"
-
       - name: Replace ArtifactId Value
         uses: Mudlet/xmlstarlet-action@master
         with:
@@ -49,11 +45,6 @@ jobs:
         uses: Mudlet/xmlstarlet-action@master
         with:
           args: ed --inplace  -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:build/s:finalName" -v Microsoft-Teams-for-Jira-Server pom.xml
-
-      - name: Replace ProjectName Value
-        uses: Mudlet/xmlstarlet-action@master
-        with:
-          args: ed --inplace  -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:name" -v Microsoft-Teams-for-Jira-Server pom.xml
 
       - name: Run a powershell script
         run: ./setEnvironmentProperties.ps1 "src/main/resources/integration.properties" "c8e573e8-b3ff-4c89-afbd-d75731ba97fc" "microsoft-teams" "https://jira-server.msteams-atlassian.com/JiraGateway?atlasId=%s&atlasUrl=%s&pluginVersion=%s" ${{ github.run_number }} "https://jira-server.msteams-atlassian.com"
