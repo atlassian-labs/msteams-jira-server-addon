@@ -10,8 +10,8 @@
     <version>1.0.5-SNAPSHOT</version>
 
     <organization>
-        <name>Microsoft Teams</name>
-        <url>https://products.office.com/microsoft-teams</url>
+        <name>Atlassian</name>
+        <url>https://www.atlassian.com/</url>
     </organization>
 
     <name>integration</name>

@@ -20,22 +20,22 @@ jobs:
         id: date
         run: echo "::set-output name=date::$(date +'%Y.%m.%d')"
 
-      - name: Replace-artifactId
+      - name: Replace ArtifactId Value
         uses: Mudlet/xmlstarlet-action@master
         with:
           args: ed --inplace  -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:artifactId" -v microsoft-teams-integration pom.xml
 
-      - name: Replace-version
+      - name: Replace Version Value
         uses: Mudlet/xmlstarlet-action@master
         with:
           args: ed --inplace  -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:version" -v ${{ github.run_number }} pom.xml
 
-      - name: Replace-finalName
+      - name: Replace FinalName Value
         uses: Mudlet/xmlstarlet-action@master
         with:
           args: ed --inplace  -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:build/s:finalName" -v microsoft-teams-integration-${{ github.run_number }} pom.xml
 
-      - name: Replace-projectName
+      - name: Replace ProjectName Value
         uses: Mudlet/xmlstarlet-action@master
         with:
           args: ed --inplace  -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:name" -v Microsoft-Teams-for-Jira-Server-(Integration) pom.xml
