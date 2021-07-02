@@ -1,0 +1,61 @@
+name: Refapp JiraServer Staging
+
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+        
+    - name: Get current date
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y.%m.%d')"
+        
+    - name: Replace-artifactId
+      uses: Mudlet/xmlstarlet-action@master
+      with:
+        args: ed --inplace  -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:artifactId" -v microsoft-teams-staging pom.xml
+
+    - name: Replace-version
+      uses: Mudlet/xmlstarlet-action@master
+      with:
+        args: ed --inplace  -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:version" -v ${{ github.run_number }} pom.xml
+
+    - name: Replace-finalName
+      uses: Mudlet/xmlstarlet-action@master
+      with:
+        args: ed --inplace  -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:build/s:finalName" -v microsoft-teams-staging-${{ github.run_number }} pom.xml
+     
+    - name: Replace-projectName
+      uses: Mudlet/xmlstarlet-action@master
+      with:
+        args: ed --inplace  -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:name" -v Microsoft-Teams-for-Jira-Server(Staging) pom.xml   
+        
+        
+    - name: Run a powershell script
+      run: ./setEnvironmentProperties.ps1 "src/main/resources/integration.properties" "e52889b0-9b26-4f1c-b3db-4211be72d164" "microsoft-teams-staging" "https://jira-server-staging.msteams-atlassian.com/JiraGateway?atlasId=%s&atlasUrl=%s&pluginVersion=%s" ${{ github.run_number }} "https://jira-server-staging.msteams-atlassian.com"
+      shell: pwsh
+        
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+        
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+        
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.3
+      with:
+        name: RefAppAddon.Staging.${{ github.run_number }}
+        path: ${{ github.workspace }}/target/*.jar
