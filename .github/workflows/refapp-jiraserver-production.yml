@@ -15,6 +15,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y.%m.')"
 
       - name: Delete users backdoor servlet
         uses: JesseTG/rm@v1.0.2
@@ -39,15 +43,15 @@ jobs:
       - name: Replace Version Value
         uses: Mudlet/xmlstarlet-action@master
         with:
-          args: ed --inplace  -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:version" -v ${{ github.run_number }} pom.xml
+          args: ed --inplace  -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:version" -v ${{ steps.date.outputs.date }}${{ github.run_number }} pom.xml
 
       - name: Replace FinalName Value
         uses: Mudlet/xmlstarlet-action@master
         with:
-          args: ed --inplace  -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:build/s:finalName" -v microsoft-teams-${{ github.run_number }} pom.xml
+          args: ed --inplace  -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:build/s:finalName" -v microsoft-teams-${{ steps.date.outputs.date }}${{ github.run_number }} pom.xml
 
       - name: Run a powershell script
-        run: ./setEnvironmentProperties.ps1 "src/main/resources/integration.properties" "c8e573e8-b3ff-4c89-afbd-d75731ba97fc" "microsoft-teams" "https://jira-server.msteams-atlassian.com/JiraGateway?atlasId=%s&atlasUrl=%s&pluginVersion=%s" ${{ github.run_number }} "https://jira-server.msteams-atlassian.com"
+        run: ./setEnvironmentProperties.ps1 "src/main/resources/integration.properties" "c8e573e8-b3ff-4c89-afbd-d75731ba97fc" "microsoft-teams" "https://jira-server.msteams-atlassian.com/JiraGateway?atlasId=%s&atlasUrl=%s&pluginVersion=%s" ${{ steps.date.outputs.date }}${{ github.run_number }} "https://jira-server.msteams-atlassian.com"
         shell: pwsh
 
       - name: Set up JDK 11
@@ -62,5 +66,5 @@ jobs:
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.2.3
         with:
-          name: RefAppAddon.Production.${{ github.run_number }}
+          name: RefAppAddon.Production.${{ steps.date.outputs.date }}${{ github.run_number }}
           path: ${{ github.workspace }}/target/*.jar
