@@ -14,7 +14,7 @@ or by manually downloading plugin JAR files from Marketplace pages for [Jira](ht
 Links to the official documentation are specified on Marketplace pages.
 
 Supported products (on 5 Mar, 2021). See [EOL policy](https://confluence.atlassian.com/support/atlassian-support-end-of-life-policy-201851003.html).
-* Jira Server 7.0.0 - 8.17.0 JDK 8.
+* Jira Server 7.0.0 - 8.19.0 JDK 8.
 
 ## A note on future development plans
 
