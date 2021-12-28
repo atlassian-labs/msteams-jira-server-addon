@@ -91,7 +91,9 @@ public class ConfigPageServlet extends HttpServlet {
                 .findFirst()
                 .map(Cookie::getValue)
                 .orElse(null);
-        if (pluginToken == null || !xsrfTokenGenerator.validateToken(request, token) || !pluginToken.equals(token)) return;
+        LOG.debug("Received tokens and data in doPost", request, pluginToken, token);
+
+        if (pluginToken == null || !pluginToken.equals(token)) return;
 
         Optional<String> doEmbedIcons = Optional.ofNullable(request.getParameter(EMBED_ICONS));
         if(doEmbedIcons.isPresent() && !pluginImageSettings.getEmbedIconsSetting()) {
