@@ -74,7 +74,7 @@ public class ConfigPageServlet extends HttpServlet {
                 response.addCookie(new Cookie(PLUGIN_XSRF_TOKEN, token));
 
                 renderer.render("templates/admin.vm", parameters, response.getWriter());
-                LOG.debug("Received tokens and data in doGet. token = {}", request, pluginToken, token);
+                LOG.debug("Received tokens and data in doGet. token = {}", token);
             }
         } catch (IOException | RenderingException e) {
             LOG.info(e.getMessage());
