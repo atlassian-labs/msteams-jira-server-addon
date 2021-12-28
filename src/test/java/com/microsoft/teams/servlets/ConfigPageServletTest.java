@@ -63,16 +63,16 @@ public class ConfigPageServletTest {
         configPageServlet = new ConfigPageServlet(renderer, redirectHelper, signalRService, appProperties, keysService, hostProperties, pluginImageSettings);
     }
 
-    // @Test
-    // public void doGet() {
-    //     when(redirectHelper.isUserLoggedInAndAdmin(request, response)).thenReturn(true);
+    @Test
+    public void doGet() {
+        when(redirectHelper.isUserLoggedInAndAdmin(request, response)).thenReturn(true);
 
-    //     configPageServlet.doGet(request, response);
+        configPageServlet.doGet(request, response);
 
-    //     verify(redirectHelper).isUserLoggedInAndAdmin(request, response);
-    //     verify(response).setContentType(anyString());
-    //     verify(response).addCookie(any(Cookie.class));
-    // }
+        verify(redirectHelper).isUserLoggedInAndAdmin(request, response);
+        verify(response).setContentType(anyString());
+        verify(response).addCookie(any(Cookie.class));
+    }
 
     // @Test
     // public void doPostTestSetEmBedIconsToTrue() {
