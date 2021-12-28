@@ -97,7 +97,7 @@ public class ConfigPageServlet extends HttpServlet {
 
         if (pluginToken == null || !pluginToken.equals(token)) return;
 
-        LOG.debug('Passed return');
+        LOG.debug("Passed return");
 
         Optional<String> doEmbedIcons = Optional.ofNullable(request.getParameter(EMBED_ICONS));
         if(doEmbedIcons.isPresent() && !pluginImageSettings.getEmbedIconsSetting()) {
