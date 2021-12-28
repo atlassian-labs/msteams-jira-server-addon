@@ -92,8 +92,8 @@ public class ConfigPageServlet extends HttpServlet {
                 .findFirst()
                 .map(Cookie::getValue)
                 .orElse(null);
-        boolean test = !pluginToken.equals(token));
-        LOG.debug("Received tokens and data in doPost. Request = {}, pluginToken = {}, token = {}, check={}", request, pluginToken, token, test) ;
+        boolean test = !pluginToken.equals(token);
+        LOG.debug("Received tokens and data in doPost. Request = {}, pluginToken = {}, token = {}, check={}", request, pluginToken, token, test);
 
         if (pluginToken == null || !pluginToken.equals(token)) return;
 
