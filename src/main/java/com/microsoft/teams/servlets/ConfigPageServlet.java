@@ -92,7 +92,7 @@ public class ConfigPageServlet extends HttpServlet {
 
         Optional<String> atl_token = Optional.ofNullable(request.getParameter(ATL_TOKEN));
 
-        LOG.debug("Received tokens and data in doPost. Request = {}", request);
+        LOG.debug("Received tokens and data in doPost. Request = {}, pluginToken = {}, atlToken = {}", request, pluginToken, atl_token.get());
 
         if (pluginToken == null && atl_token.isPresent() && !pluginToken.equals(atl_token.get())) return;
 
