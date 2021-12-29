@@ -75,7 +75,6 @@ public class ConfigPageServlet extends HttpServlet {
                 response.addCookie(new Cookie(PLUGIN_XSRF_TOKEN, token));
 
                 renderer.render("templates/admin.vm", parameters, response.getWriter());
-                LOG.debug("Received tokens and data in doGet. token = {}", token);
             }
         } catch (IOException | RenderingException e) {
             LOG.info(e.getMessage());
@@ -92,6 +91,8 @@ public class ConfigPageServlet extends HttpServlet {
                 .orElse(null);
 
         Optional<String> atl_token = Optional.ofNullable(request.getParameter(ATL_TOKEN));
+
+        LOG.debug("Received tokens and data in doPost. Request = {}", request);
 
         if (pluginToken == null && atl_token.isPresent() && !pluginToken.equals(atl_token.get())) return;
 
