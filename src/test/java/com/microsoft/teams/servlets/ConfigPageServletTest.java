@@ -54,6 +54,7 @@ public class ConfigPageServletTest {
     private static final String EMBED_AVATARS = "embed-avatars";
     private static final String EMBED_PROJECT_AVATARS = "embed-project-avatars";
     private static final String PLUGIN_XSRF_TOKEN = "plugin.xsrf.token";
+    private static final String ATL_TOKEN = "atl_token";
 
     @Before
     public void setUp() throws Exception {
@@ -78,9 +79,7 @@ public class ConfigPageServletTest {
     public void doPostTestSetEmBedIconsToTrue() {
         Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
 
-        when(xsrfTokenGenerator.getToken(any(HttpServletRequest.class))).thenReturn(cookie.getName());
-        when(xsrfTokenGenerator.validateToken(request, cookie.getName())).thenReturn(true);
-
+        given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_ICONS)).willReturn("embed_icons");
         given(pluginImageSettings.getEmbedIconsSetting()).willReturn(false);
         given(request.getCookies()).willReturn(new Cookie[]{ cookie});
@@ -94,9 +93,7 @@ public class ConfigPageServletTest {
     public void doPostTestSetEmBedIconsToFalse() {
         Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
 
-        when(xsrfTokenGenerator.getToken(any(HttpServletRequest.class))).thenReturn(cookie.getName());
-        when(xsrfTokenGenerator.validateToken(request, cookie.getName())).thenReturn(true);
-
+        given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_ICONS)).willReturn(null);
         given(pluginImageSettings.getEmbedIconsSetting()).willReturn(true);
         given(request.getCookies()).willReturn(new Cookie[]{ cookie});
@@ -106,13 +103,11 @@ public class ConfigPageServletTest {
         verify(pluginImageSettings).setEmbedIconsSetting(false);
     }
 
-    @Test
+  @Test
     public void doPostTestSetEmBedAvatarsToTrue() {
         Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
 
-        when(xsrfTokenGenerator.getToken(any(HttpServletRequest.class))).thenReturn(cookie.getName());
-        when(xsrfTokenGenerator.validateToken(request, cookie.getName())).thenReturn(true);
-
+        given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_AVATARS)).willReturn("embed_avatars");
         given(pluginImageSettings.getEmbedAvatarsSetting()).willReturn(false);
         given(request.getCookies()).willReturn(new Cookie[]{ cookie});
@@ -126,9 +121,7 @@ public class ConfigPageServletTest {
     public void doPostTestSetEmBedAvatarsToFalse() {
         Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
 
-        when(xsrfTokenGenerator.getToken(any(HttpServletRequest.class))).thenReturn(cookie.getName());
-        when(xsrfTokenGenerator.validateToken(request, cookie.getName())).thenReturn(true);
-
+        given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_AVATARS)).willReturn(null);
         given(pluginImageSettings.getEmbedAvatarsSetting()).willReturn(true);
         given(request.getCookies()).willReturn(new Cookie[]{ cookie});
@@ -142,9 +135,7 @@ public class ConfigPageServletTest {
     public void doPostTestSetEmBedProjectAvatarsToTrue() {
         Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
 
-        when(xsrfTokenGenerator.getToken(any(HttpServletRequest.class))).thenReturn(cookie.getName());
-        when(xsrfTokenGenerator.validateToken(request, cookie.getName())).thenReturn(true);
-
+        given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_PROJECT_AVATARS)).willReturn("embed_project_avatars");
         given(pluginImageSettings.getEmbedProjectAvatarsSetting()).willReturn(false);
         given(request.getCookies()).willReturn(new Cookie[]{ cookie});
@@ -158,9 +149,7 @@ public class ConfigPageServletTest {
     public void doPostTestSetEmBedProjectAvatarsToFalse() {
         Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
 
-        when(xsrfTokenGenerator.getToken(any(HttpServletRequest.class))).thenReturn(cookie.getName());
-        when(xsrfTokenGenerator.validateToken(request, cookie.getName())).thenReturn(true);
-
+        given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_PROJECT_AVATARS)).willReturn(null);
         given(pluginImageSettings.getEmbedProjectAvatarsSetting()).willReturn(true);
         given(request.getCookies()).willReturn(new Cookie[]{ cookie});
