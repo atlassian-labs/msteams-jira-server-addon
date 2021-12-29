@@ -85,7 +85,6 @@ public class ConfigPageServlet extends HttpServlet {
     @Override
     @RequiresXsrfCheck
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
-
         String pluginToken = Arrays.stream(request.getCookies())
                 .filter(c -> c.getName().equals(PLUGIN_XSRF_TOKEN))
                 .findFirst()
@@ -93,9 +92,6 @@ public class ConfigPageServlet extends HttpServlet {
                 .orElse(null);
 
         Optional<String> atl_token = Optional.ofNullable(request.getParameter(ATL_TOKEN));
-
-        LOG.debug("Received tokens and data in doPost. tokenFromForm = {}", atl_token.get());
-        LOG.debug("Received tokens and data in doPost. Request = {}, pluginToken = {}", request, pluginToken);
 
         if (pluginToken == null && atl_token.isPresent() && !pluginToken.equals(atl_token.get())) return;
 
