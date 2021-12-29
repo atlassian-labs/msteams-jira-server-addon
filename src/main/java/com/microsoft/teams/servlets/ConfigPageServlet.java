@@ -35,6 +35,7 @@ public class ConfigPageServlet extends HttpServlet {
     private static final String EMBED_AVATARS = "embed-avatars";
     private static final String EMBED_PROJECT_AVATARS = "embed-project-avatars";
     private static final String PLUGIN_XSRF_TOKEN = "plugin.xsrf.token";
+    private static final String ATL_TOKEN = "atl_token";
 
     private final TemplateRenderer renderer;
     private final RedirectHelper redirectHelper;
@@ -70,7 +71,7 @@ public class ConfigPageServlet extends HttpServlet {
                 XsrfTokenGenerator xsrfTokenGenerator = ComponentAccessor.getComponentOfType(XsrfTokenGenerator.class);
                 String token = xsrfTokenGenerator.generateToken(request);
                 Map<String, Object> parameters = new HashMap<>(buildContext());
-                parameters.put("atl_token", token);
+                parameters.put(ATL_TOKEN, token);
                 response.addCookie(new Cookie(PLUGIN_XSRF_TOKEN, token));
 
                 renderer.render("templates/admin.vm", parameters, response.getWriter());
@@ -93,6 +94,8 @@ public class ConfigPageServlet extends HttpServlet {
                 .map(Cookie::getValue)
                 .orElse(null);
         boolean test = !pluginToken.equals(token);
+        Optional<String> tokenFromForm = Optional.ofNullable(request.getParameter(ATL_TOKEN));
+        LOG.debug("Received tokens and data in doPost. tokenFromForm = {}", tokenFromForm);
         LOG.debug("Received tokens and data in doPost. Request = {}, pluginToken = {}, token = {}, check={}", request, pluginToken, token, test);
 
         if (pluginToken == null || !pluginToken.equals(token)) return;
