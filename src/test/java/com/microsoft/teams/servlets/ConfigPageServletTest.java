@@ -79,7 +79,7 @@ public class ConfigPageServletTest {
     public void doPostTestSetEmBedIconsToTrue() {
         Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
 
-        given(request.getParameter(ATL_TOKEN)).willReturn((cookie.getName());
+        given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_ICONS)).willReturn("embed_icons");
         given(pluginImageSettings.getEmbedIconsSetting()).willReturn(false);
         given(request.getCookies()).willReturn(new Cookie[]{ cookie});
