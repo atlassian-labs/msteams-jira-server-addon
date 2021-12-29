@@ -79,7 +79,7 @@ public class ConfigPageServletTest {
     public void doPostTestSetEmBedIconsToTrue() {
         Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
 
-        given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
+
         given(request.getParameter(EMBED_ICONS)).willReturn("embed_icons");
         given(pluginImageSettings.getEmbedIconsSetting()).willReturn(false);
         given(request.getCookies()).willReturn(new Cookie[]{ cookie});
@@ -89,83 +89,73 @@ public class ConfigPageServletTest {
         verify(pluginImageSettings).setEmbedIconsSetting(true);
     }
 
-    // @Test
-    // public void doPostTestSetEmBedIconsToFalse() {
-    //     Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
+    @Test
+    public void doPostTestSetEmBedIconsToFalse() {
+        Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
 
-    //     when(xsrfTokenGenerator.getToken(any(HttpServletRequest.class))).thenReturn(cookie.getName());
-    //     when(xsrfTokenGenerator.validateToken(request, cookie.getName())).thenReturn(true);
+        given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
+        given(request.getParameter(EMBED_ICONS)).willReturn(null);
+        given(pluginImageSettings.getEmbedIconsSetting()).willReturn(true);
+        given(request.getCookies()).willReturn(new Cookie[]{ cookie});
 
-    //     given(request.getParameter(EMBED_ICONS)).willReturn(null);
-    //     given(pluginImageSettings.getEmbedIconsSetting()).willReturn(true);
-    //     given(request.getCookies()).willReturn(new Cookie[]{ cookie});
+        configPageServlet.doPost(request, response);
 
-    //     configPageServlet.doPost(request, response);
+        verify(pluginImageSettings).setEmbedIconsSetting(false);
+    }
 
-    //     verify(pluginImageSettings).setEmbedIconsSetting(false);
-    // }
+  @Test
+    public void doPostTestSetEmBedAvatarsToTrue() {
+        Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
 
-//   @Test
-//     public void doPostTestSetEmBedAvatarsToTrue() {
-//         Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
+        given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
+        given(request.getParameter(EMBED_AVATARS)).willReturn("embed_avatars");
+        given(pluginImageSettings.getEmbedAvatarsSetting()).willReturn(false);
+        given(request.getCookies()).willReturn(new Cookie[]{ cookie});
 
-//         when(xsrfTokenGenerator.getToken(any(HttpServletRequest.class))).thenReturn(cookie.getName());
-//         when(xsrfTokenGenerator.validateToken(request, cookie.getName())).thenReturn(true);
+        configPageServlet.doPost(request, response);
 
-//         given(request.getParameter(EMBED_AVATARS)).willReturn("embed_avatars");
-//         given(pluginImageSettings.getEmbedAvatarsSetting()).willReturn(false);
-//         given(request.getCookies()).willReturn(new Cookie[]{ cookie});
+        verify(pluginImageSettings).setEmbedAvatarsSetting(true);
+    }
 
-//         configPageServlet.doPost(request, response);
+    @Test
+    public void doPostTestSetEmBedAvatarsToFalse() {
+        Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
 
-//         verify(pluginImageSettings).setEmbedAvatarsSetting(true);
-//     }
+        given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
+        given(request.getParameter(EMBED_AVATARS)).willReturn(null);
+        given(pluginImageSettings.getEmbedAvatarsSetting()).willReturn(true);
+        given(request.getCookies()).willReturn(new Cookie[]{ cookie});
 
-//     @Test
-//     public void doPostTestSetEmBedAvatarsToFalse() {
-//         Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
+        configPageServlet.doPost(request, response);
 
-//         when(xsrfTokenGenerator.getToken(any(HttpServletRequest.class))).thenReturn(cookie.getName());
-//         when(xsrfTokenGenerator.validateToken(request, cookie.getName())).thenReturn(true);
+        verify(pluginImageSettings).setEmbedAvatarsSetting(false);
+    }
 
-//         given(request.getParameter(EMBED_AVATARS)).willReturn(null);
-//         given(pluginImageSettings.getEmbedAvatarsSetting()).willReturn(true);
-//         given(request.getCookies()).willReturn(new Cookie[]{ cookie});
+    @Test
+    public void doPostTestSetEmBedProjectAvatarsToTrue() {
+        Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
 
-//         configPageServlet.doPost(request, response);
+        given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
+        given(request.getParameter(EMBED_PROJECT_AVATARS)).willReturn("embed_project_avatars");
+        given(pluginImageSettings.getEmbedProjectAvatarsSetting()).willReturn(false);
+        given(request.getCookies()).willReturn(new Cookie[]{ cookie});
 
-//         verify(pluginImageSettings).setEmbedAvatarsSetting(false);
-//     }
+        configPageServlet.doPost(request, response);
 
-//     @Test
-//     public void doPostTestSetEmBedProjectAvatarsToTrue() {
-//         Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
+        verify(pluginImageSettings).setEmbedProjectAvatarsSetting(true);
+    }
 
-//         when(xsrfTokenGenerator.getToken(any(HttpServletRequest.class))).thenReturn(cookie.getName());
-//         when(xsrfTokenGenerator.validateToken(request, cookie.getName())).thenReturn(true);
+    @Test
+    public void doPostTestSetEmBedProjectAvatarsToFalse() {
+        Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
 
-//         given(request.getParameter(EMBED_PROJECT_AVATARS)).willReturn("embed_project_avatars");
-//         given(pluginImageSettings.getEmbedProjectAvatarsSetting()).willReturn(false);
-//         given(request.getCookies()).willReturn(new Cookie[]{ cookie});
+        given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
+        given(request.getParameter(EMBED_PROJECT_AVATARS)).willReturn(null);
+        given(pluginImageSettings.getEmbedProjectAvatarsSetting()).willReturn(true);
+        given(request.getCookies()).willReturn(new Cookie[]{ cookie});
 
-//         configPageServlet.doPost(request, response);
+        configPageServlet.doPost(request, response);
 
-//         verify(pluginImageSettings).setEmbedProjectAvatarsSetting(true);
-//     }
-
-//     @Test
-//     public void doPostTestSetEmBedProjectAvatarsToFalse() {
-//         Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
-
-//         when(xsrfTokenGenerator.getToken(any(HttpServletRequest.class))).thenReturn(cookie.getName());
-//         when(xsrfTokenGenerator.validateToken(request, cookie.getName())).thenReturn(true);
-
-//         given(request.getParameter(EMBED_PROJECT_AVATARS)).willReturn(null);
-//         given(pluginImageSettings.getEmbedProjectAvatarsSetting()).willReturn(true);
-//         given(request.getCookies()).willReturn(new Cookie[]{ cookie});
-
-//         configPageServlet.doPost(request, response);
-
-//         verify(pluginImageSettings).setEmbedProjectAvatarsSetting(false);
-//     }
+        verify(pluginImageSettings).setEmbedProjectAvatarsSetting(false);
+    }
 }
