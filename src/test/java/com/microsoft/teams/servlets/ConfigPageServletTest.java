@@ -54,6 +54,7 @@ public class ConfigPageServletTest {
     private static final String EMBED_AVATARS = "embed-avatars";
     private static final String EMBED_PROJECT_AVATARS = "embed-project-avatars";
     private static final String PLUGIN_XSRF_TOKEN = "plugin.xsrf.token";
+    private static final String ATL_TOKEN = "atl_token";
 
     @Before
     public void setUp() throws Exception {
@@ -74,21 +75,19 @@ public class ConfigPageServletTest {
         verify(response).addCookie(any(Cookie.class));
     }
 
-    // @Test
-    // public void doPostTestSetEmBedIconsToTrue() {
-    //     Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
+    @Test
+    public void doPostTestSetEmBedIconsToTrue() {
+        Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
 
-    //     when(xsrfTokenGenerator.getToken(any(HttpServletRequest.class))).thenReturn(cookie.getName());
-    //     when(xsrfTokenGenerator.validateToken(request, cookie.getName())).thenReturn(true);
+        given(request.getParameter(ATL_TOKEN)).willReturn((cookie.getName());
+        given(request.getParameter(EMBED_ICONS)).willReturn("embed_icons");
+        given(pluginImageSettings.getEmbedIconsSetting()).willReturn(false);
+        given(request.getCookies()).willReturn(new Cookie[]{ cookie});
 
-    //     given(request.getParameter(EMBED_ICONS)).willReturn("embed_icons");
-    //     given(pluginImageSettings.getEmbedIconsSetting()).willReturn(false);
-    //     given(request.getCookies()).willReturn(new Cookie[]{ cookie});
+        configPageServlet.doPost(request, response);
 
-    //     configPageServlet.doPost(request, response);
-
-    //     verify(pluginImageSettings).setEmbedIconsSetting(true);
-    // }
+        verify(pluginImageSettings).setEmbedIconsSetting(true);
+    }
 
     // @Test
     // public void doPostTestSetEmBedIconsToFalse() {
