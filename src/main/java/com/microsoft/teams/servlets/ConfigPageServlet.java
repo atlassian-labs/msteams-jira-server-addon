@@ -85,22 +85,19 @@ public class ConfigPageServlet extends HttpServlet {
     @Override
     @RequiresXsrfCheck
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
-        XsrfTokenGenerator xsrfTokenGenerator = ComponentAccessor.getComponentOfType(XsrfTokenGenerator.class);
-        String token = xsrfTokenGenerator.getToken(request);
 
         String pluginToken = Arrays.stream(request.getCookies())
                 .filter(c -> c.getName().equals(PLUGIN_XSRF_TOKEN))
                 .findFirst()
                 .map(Cookie::getValue)
                 .orElse(null);
-        boolean test = !pluginToken.equals(token);
-        Optional<String> tokenFromForm = Optional.ofNullable(request.getParameter(ATL_TOKEN));
-        LOG.debug("Received tokens and data in doPost. tokenFromForm = {}", tokenFromForm);
-        LOG.debug("Received tokens and data in doPost. Request = {}, pluginToken = {}, token = {}, check={}", request, pluginToken, token, test);
 
-        if (pluginToken == null || !pluginToken.equals(token)) return;
+        Optional<String> atl_token = Optional.ofNullable(request.getParameter(ATL_TOKEN));
 
-        LOG.debug("Passed return");
+        LOG.debug("Received tokens and data in doPost. tokenFromForm = {}", tokenFromForm.get());
+        LOG.debug("Received tokens and data in doPost. Request = {}, pluginToken = {}, token = {}", request, pluginToken, token);
+
+        if (pluginToken == null && atl_token.isPresent() && !pluginToken.equals(atl_token.get())) return;
 
         Optional<String> doEmbedIcons = Optional.ofNullable(request.getParameter(EMBED_ICONS));
         if(doEmbedIcons.isPresent() && !pluginImageSettings.getEmbedIconsSetting()) {
