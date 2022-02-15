@@ -2,7 +2,6 @@ package com.microsoft.teams.oauth;
 
 import com.google.api.client.auth.oauth.OAuthRsaSigner;
 import com.google.api.client.http.apache.ApacheHttpTransport;
-import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
 import com.microsoft.teams.service.HostPropertiesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,6 +11,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Base64;
 
 @Component
 public class OAuthTokenFactory {
@@ -89,7 +89,7 @@ public class OAuthTokenFactory {
      * @throws InvalidKeySpecException from generatePrivate() method
      */
     private PrivateKey getPrivateKey(String privateKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        byte[] privateBytes = Base64.decodeBase64(privateKey);
+        byte[] privateBytes = Base64.getDecoder().decode(privateKey);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateBytes);
         KeyFactory kf = KeyFactory.getInstance("RSA");
         return kf.generatePrivate(keySpec);
