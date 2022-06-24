@@ -88,6 +88,11 @@ public class GetProjectsMessageHandler implements ProcessMessageStrategy {
             ProjectService projectService = ComponentAccessor.getComponent(ProjectService.class);
             jiraProjectsList = projectService.getAllProjects(user).get();
 
+            long finishTime = System.currentTimeMillis();
+            long timeElapsed = finishTime - startTime;
+    
+            LOG.debug("Received raw projects in " + timeElapsed + " milliseconds. Total number of projects: " + jiraProjectsList.size());
+
             AvatarService avatarService = ComponentAccessor.getComponent(AvatarService.class);
 
             jiraProjectsList.forEach(x -> {
@@ -114,7 +119,7 @@ public class GetProjectsMessageHandler implements ProcessMessageStrategy {
         long finishTime = System.currentTimeMillis();
         long timeElapsed = finishTime - startTime;
 
-        LOG.debug("Received projects in " + timeElapsed + " milliseconds");
+        LOG.debug("Processed projects in " + timeElapsed + " milliseconds");
 
         return new ResponseMessage(imageHelper).withCode(code).withResponse(msg).withMessage("").build(
                 hostProperties.getFullBaseUrl(), requestService.getHttpRequestFactory(message.getTeamsId())
