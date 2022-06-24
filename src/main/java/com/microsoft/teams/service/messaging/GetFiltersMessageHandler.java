@@ -89,10 +89,19 @@ public class GetFiltersMessageHandler implements ProcessMessageStrategy {
                 .toSearchParameters();
 
         SharedEntitySearchResult<SearchRequest> filtersResult;
+
+        long startTime = System.currentTimeMillis();
+
         try {
             jiraThreadLocalUtil.preCall();
             filtersResult = ComponentAccessor.getComponent(SearchRequestService.class)
                     .search(jsc, searchParams, PAGE_POSITION, PAGE_WIDTH);
+
+            long finishTime = System.currentTimeMillis();
+            long timeElapsed = finishTime - startTime;
+
+            LOG.debug("Received raw filters in " + timeElapsed + " milliseconds. Total number of filters: " + filtersResult.size());
+
         } catch (Exception ex) {
             LOG.debug(String.format("Cannot parse requested filter name %s, cause of error(%s): %s",
                     filterName, ex.getClass().getCanonicalName(), ex.getMessage()));
@@ -114,6 +123,11 @@ public class GetFiltersMessageHandler implements ProcessMessageStrategy {
         }
 
         String filtersJSON = new Gson().toJson(filtersList, new TypeToken<ArrayList<Filter>>() {}.getType());
+
+        long finishTime = System.currentTimeMillis();
+        long timeElapsed = finishTime - startTime;
+
+        LOG.debug("Received filters in " + timeElapsed + " milliseconds");
 
         return new ResponseMessage().withCode(200).withResponse(filtersJSON).withMessage("").build();
     }
