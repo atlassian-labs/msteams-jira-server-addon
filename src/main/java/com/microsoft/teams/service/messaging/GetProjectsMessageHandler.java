@@ -18,16 +18,22 @@ import com.microsoft.teams.utils.ImageHelper;
 import com.atlassian.jira.avatar.Avatar;
 import com.atlassian.jira.avatar.AvatarService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
+import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+import static com.microsoft.teams.utils.ExceptionHelpers.exceptionLogExtender;
+
 @Component
 public class GetProjectsMessageHandler implements ProcessMessageStrategy {
 
     private static final Logger LOG = Logger.getLogger(GetProjectsMessageHandler.class);
+
+    private static final String GET_PROJECTS_FAILED_MSG = "Cannot get projects.";
 
     private static final String GET_AVATARS_PARAMETER = "getAvatars";
     private final TeamsAtlasUserServiceImpl userService;
@@ -66,36 +72,57 @@ public class GetProjectsMessageHandler implements ProcessMessageStrategy {
     }
 
     private String getProjectsForUserByProjectName(String atlasResponse, RequestMessage message) {
-        List<com.atlassian.jira.project.Project> jiraProjectsList = new ArrayList<>();
-        List<Project> projectsList = new ArrayList<>();
-        String userName = StringUtils.substringBetween(atlasResponse, "name\":\"", "\"");
-        Map requestBodyMap = message.getRequestBody() == null ? null : new Gson().fromJson(message.getRequestBody(), Map.class);
-        Object getAvatarsValue = requestBodyMap == null ? null : requestBodyMap.get(GET_AVATARS_PARAMETER);
-        Boolean getAvatars = getAvatarsValue == null ? false : Boolean.parseBoolean(getAvatarsValue.toString());
-        ApplicationUser user = ComponentAccessor.getUserManager().getUserByName(userName);
+        String msg;
+        int code = HttpStatus.SC_OK;
+        long startTime = System.currentTimeMillis();
 
-        ProjectService projectService = ComponentAccessor.getComponent(ProjectService.class);
-        jiraProjectsList = projectService.getAllProjects(user).get();
+        try {
+            List<com.atlassian.jira.project.Project> jiraProjectsList = new ArrayList<>();
+            List<Project> projectsList = new ArrayList<>();
+            String userName = StringUtils.substringBetween(atlasResponse, "name\":\"", "\"");
+            Map requestBodyMap = message.getRequestBody() == null ? null : new Gson().fromJson(message.getRequestBody(), Map.class);
+            Object getAvatarsValue = requestBodyMap == null ? null : requestBodyMap.get(GET_AVATARS_PARAMETER);
+            Boolean getAvatars = getAvatarsValue == null ? false : Boolean.parseBoolean(getAvatarsValue.toString());
+            ApplicationUser user = ComponentAccessor.getUserManager().getUserByName(userName);
 
-        AvatarService avatarService = ComponentAccessor.getComponent(AvatarService.class);
+            ProjectService projectService = ComponentAccessor.getComponent(ProjectService.class);
+            jiraProjectsList = projectService.getAllProjects(user).get();
 
-        jiraProjectsList.forEach(x-> {
-            Project project = new Project();
-            project.setId(x.getId().toString());
-            project.setKey(x.getKey());
-            project.setName(x.getName());
+            long finishTime = System.currentTimeMillis();
+            long timeElapsed = finishTime - startTime;
+    
+            LOG.debug("Received raw projects in " + timeElapsed + " milliseconds. Total number of projects: " + jiraProjectsList.size());
 
-            if (getAvatars) {
-                project.setAvatarUrls(ImmutableMap.of("24x24", avatarService.getProjectAvatarAbsoluteURL(x, Avatar.Size.NORMAL)));
-            }
+            AvatarService avatarService = ComponentAccessor.getComponent(AvatarService.class);
 
-            projectsList.add(project);
-        });
+            jiraProjectsList.forEach(x -> {
+                Project project = new Project();
+                project.setId(x.getId().toString());
+                project.setKey(x.getKey());
+                project.setName(x.getName());
 
-        String projectsJSON = new Gson().toJson(projectsList, new TypeToken<ArrayList<Project>>() {}.getType());
+                if (getAvatars) {
+                    project.setAvatarUrls(ImmutableMap.of("24x24", avatarService.getProjectAvatarAbsoluteURL(x, Avatar.Size.NORMAL)));
+                }
 
-        return new ResponseMessage(imageHelper).withCode(200).withResponse(projectsJSON).withMessage("").build(
-            hostProperties.getFullBaseUrl(), requestService.getHttpRequestFactory(message.getTeamsId())
+                projectsList.add(project);
+            });
+
+            msg = new Gson().toJson(projectsList, new TypeToken<ArrayList<Project>>() {
+            }.getType());
+        } catch (Exception e) {
+            code = HttpStatus.SC_INTERNAL_SERVER_ERROR;
+            msg = GET_PROJECTS_FAILED_MSG;
+            exceptionLogExtender("getProjectsForUserByProjectName error ", Level.DEBUG, e);
+        }
+
+        long finishTime = System.currentTimeMillis();
+        long timeElapsed = finishTime - startTime;
+
+        LOG.debug("Processed projects in " + timeElapsed + " milliseconds");
+
+        return new ResponseMessage(imageHelper).withCode(code).withResponse(msg).withMessage("").build(
+                hostProperties.getFullBaseUrl(), requestService.getHttpRequestFactory(message.getTeamsId())
         );
     }
 }
