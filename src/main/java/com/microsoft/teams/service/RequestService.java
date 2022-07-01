@@ -228,9 +228,14 @@ public class RequestService {
         String msg = StringUtils.EMPTY;
         HttpRequestFactory requestFactory = getHttpRequestFactory(requestMessage.getTeamsId());
         try {
-            HttpResponse response = requestFactory.buildDeleteRequest(new GenericUrl(
-                    String.format(REQUEST_URL_PATTERN, hostProperties.getFullBaseUrl(), requestMessage.getRequestUrl())))
-                    .execute();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType("application/json");
+
+            HttpRequest request = requestFactory.buildDeleteRequest(new GenericUrl(
+                    String.format(REQUEST_URL_PATTERN, hostProperties.getFullBaseUrl(), requestMessage.getRequestUrl())));
+            request.setHeaders(headers);
+
+            HttpResponse response = request.execute();
             try {
                 atlasResponse = response.parseAsString();
             } finally {
