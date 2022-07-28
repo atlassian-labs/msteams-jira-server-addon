@@ -10,6 +10,8 @@ public class PluginImageSettingsImpl implements PluginImageSettings{
     private boolean doEmbedAvatars;
     private boolean doEmbedProjectAvatars = true;
 
+    private boolean hasSettingChanged = false;
+
     @Override
     public boolean getEmbedIconsSetting() {
         return doEmbedIcons;
@@ -17,7 +19,11 @@ public class PluginImageSettingsImpl implements PluginImageSettings{
 
     @Override
     public void setEmbedIconsSetting(boolean doEmbedIcons) {
-        this.doEmbedIcons = doEmbedIcons;
+        if (this.doEmbedIcons != doEmbedIcons) {
+            this.doEmbedIcons = doEmbedIcons;
+
+            hasSettingChanged = true;
+        }
     }
 
     @Override
@@ -27,7 +33,11 @@ public class PluginImageSettingsImpl implements PluginImageSettings{
 
     @Override
     public void setEmbedAvatarsSetting(boolean doEmbedAvatars) {
-        this.doEmbedAvatars = doEmbedAvatars;
+        if (this.doEmbedAvatars != doEmbedAvatars) {
+            this.doEmbedAvatars = doEmbedAvatars;
+
+            hasSettingChanged = true;
+        }
     }
 
     @Override
@@ -37,6 +47,20 @@ public class PluginImageSettingsImpl implements PluginImageSettings{
 
     @Override
     public void setEmbedProjectAvatarsSetting(boolean doEmbedProjectAvatars) {
-        this.doEmbedProjectAvatars = doEmbedProjectAvatars;
+        if(this.doEmbedProjectAvatars != doEmbedProjectAvatars) {
+            this.doEmbedProjectAvatars = doEmbedProjectAvatars;
+
+            hasSettingChanged = true;
+        }
+    }
+
+    @Override
+    public boolean hasChanged() {
+        return hasSettingChanged;
+    }
+
+    @Override
+    public void resetObservableState() {
+        hasSettingChanged = false;
     }
 }
