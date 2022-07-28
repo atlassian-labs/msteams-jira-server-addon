@@ -24,6 +24,7 @@ public class ImageHelperImpl implements ImageHelper {
     private static final String PRIORITIES = "priorities";
     private static final String PROJECT_AVATAR = "projectavatar";
     private static final long TEN_MB = 10000000;
+    private static Map<String, String> iconUrlBase64Map = new HashMap<>();
     private ImageEncoder imageEncoder;
     private PluginImageSettings pluginImageSettings;
 
@@ -34,19 +35,28 @@ public class ImageHelperImpl implements ImageHelper {
     }
 
     public String replaceImagesInJson(String jsonString, String baseUrl, HttpRequestFactory factory) {
-        long start = System.currentTimeMillis();
-        Map<String, String> iconUrlBase64Map = new HashMap<>();
+         long start = System.currentTimeMillis();
+
+        if(pluginImageSettings.hasChanged()) {
+            iconUrlBase64Map = new HashMap<>();
+
+            pluginImageSettings.resetObservableState();
+        }
 
         if (pluginImageSettings.getEmbedIconsSetting()) {
             collectImages(jsonString, baseUrl, factory, ICON_PATTERN, iconUrlBase64Map);
+
+            if (!iconUrlBase64Map.isEmpty()) {
+                jsonString = getConvertedJson(jsonString, iconUrlBase64Map);
+            }
         }
 
         if (pluginImageSettings.getEmbedProjectAvatarsSetting() || pluginImageSettings.getEmbedAvatarsSetting()) {
             collectImages(jsonString, baseUrl, factory, AVATAR_PATTERN, iconUrlBase64Map);
-        }
 
-        if (!iconUrlBase64Map.isEmpty()) {
-            jsonString = getConvertedJson(jsonString, iconUrlBase64Map);
+            if (!iconUrlBase64Map.isEmpty()) {
+                jsonString = getConvertedJson(jsonString, iconUrlBase64Map);
+            }
         }
 
         int length = jsonString.getBytes().length;
