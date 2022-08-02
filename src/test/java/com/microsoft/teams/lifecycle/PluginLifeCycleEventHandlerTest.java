@@ -3,10 +3,7 @@ package com.microsoft.teams.lifecycle;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.microsoft.teams.lifecycle.scheduler.SignalRConnectionMonitorJob;
 import com.microsoft.teams.oauth.PropertiesClient;
-import com.microsoft.teams.service.SignalRService;
-import com.microsoft.teams.service.HostPropertiesService;
-import com.microsoft.teams.service.KeysService;
-import com.microsoft.teams.service.TeamsAtlasUserService;
+import com.microsoft.teams.service.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,11 +31,11 @@ public class PluginLifeCycleEventHandlerTest {
     @Mock
     HostPropertiesService hostProperties;
     @Mock
-    TeamsAtlasUserService teamsAtlasUserService;
+    AoService aoService;
 
     @Before
     public void setUp() {
-        pluginLifeCycleEventHandler = new PluginLifeCycleEventHandler(propertiesClient, applicationProperties, signalRService, monitorJob, keysService, hostProperties, teamsAtlasUserService);
+        pluginLifeCycleEventHandler = new PluginLifeCycleEventHandler(propertiesClient, applicationProperties, signalRService, monitorJob, keysService, hostProperties, aoService);
     }
 
     @Test
@@ -51,6 +48,6 @@ public class PluginLifeCycleEventHandlerTest {
         verify(signalRService, times(1)).startSignalRConnection();
         verify(monitorJob, times(1)).registerScheduler();
         verify(monitorJob, times(1)).registerScheduler();
-        verify(teamsAtlasUserService, times(1)).updateDbToAoObjects();
+        verify(aoService, times(1)).updateDbToAoObjects();
     }
 }
