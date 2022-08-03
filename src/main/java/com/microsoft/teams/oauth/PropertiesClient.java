@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.microsoft.teams.ao.TeamsAtlasUser;
 import com.microsoft.teams.service.AppKeysService;
+import com.microsoft.teams.service.AppSettingsService;
 import com.microsoft.teams.service.TeamsAtlasUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,9 @@ public class PropertiesClient {
     public static final String ATLAS_ID = "atlas_id";
     public static final String CONSUMER_KEY_VALUE = "OauthKey";
     public static final String TEAMS_APP_BASE_URL = "teams_app_base_url";
+    public static final String SETTINGS_EMBED_ICONS = "settings_embed_icons";
+    public static final String SETTINGS_EMBED_AVATARS = "settings_embed_avatars";
+    public static final String SETTINGS_EMBED_PROJECT_AVATARS = "settings_embed_project_avatars";
 
     private static final Map<String, String> DEFAULT_PROPERTY_VALUES = ImmutableMap.<String, String>builder()
             .put(CONSUMER_KEY, CONSUMER_KEY_VALUE)
@@ -38,19 +42,33 @@ public class PropertiesClient {
             .put(ATLAS_ID, "")
             .build();
 
+    private static final Map<String, String> DEFAULT_SETTINGS = ImmutableMap.<String, String>builder()
+            .put(SETTINGS_EMBED_ICONS, "true")
+            .put(SETTINGS_EMBED_AVATARS, "false")
+            .put(SETTINGS_EMBED_PROJECT_AVATARS, "true")
+            .build();
+
     private final TeamsAtlasUserService userService;
     private final AppKeysService keysService;
+    private final AppSettingsService settingsService;
 
     @Autowired
     public PropertiesClient(TeamsAtlasUserService userService,
-                            AppKeysService keysService) {
+                            AppKeysService keysService, AppSettingsService settingsService) {
         this.userService = userService;
         this.keysService = keysService;
+        this.settingsService = settingsService;
     }
 
     public Map<String, String> getPropertiesOrDefaults() {
         Map<String, String> map = keysService.get();
         map.putAll(Maps.difference(map, DEFAULT_PROPERTY_VALUES).entriesOnlyOnRight());
+        return map;
+    }
+
+    public Map<String, String> getSettingsOrDefaults() {
+        Map<String, String> map = settingsService.get();
+        map.putAll(Maps.difference(map, DEFAULT_SETTINGS).entriesOnlyOnRight());
         return map;
     }
 
@@ -82,6 +100,10 @@ public class PropertiesClient {
 
     public void saveUserToDatabase(Map<String, String> properties) {
         userService.add(properties);
+    }
+
+    public void saveSettingsToDatabase(Map<String, String> settings) {
+        settingsService.set(settings);
     }
 
 }

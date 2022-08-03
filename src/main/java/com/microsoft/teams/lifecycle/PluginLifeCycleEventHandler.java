@@ -4,10 +4,7 @@ import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.microsoft.teams.lifecycle.scheduler.SignalRConnectionMonitorJob;
 import com.microsoft.teams.oauth.PropertiesClient;
-import com.microsoft.teams.service.SignalRService;
-import com.microsoft.teams.service.HostPropertiesService;
-import com.microsoft.teams.service.KeysService;
-import com.microsoft.teams.service.TeamsAtlasUserService;
+import com.microsoft.teams.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +24,7 @@ public class PluginLifeCycleEventHandler {
     private final SignalRConnectionMonitorJob monitorJob;
     private final KeysService keysService;
     private final HostPropertiesService hostProperties;
-    private final TeamsAtlasUserService teamsAtlasUserService;
+    private final AoService aoService;
 
     @Autowired
     public PluginLifeCycleEventHandler(PropertiesClient propertiesClient,
@@ -36,14 +33,14 @@ public class PluginLifeCycleEventHandler {
                                        SignalRConnectionMonitorJob monitorJob,
                                        KeysService keysService,
                                        HostPropertiesService hostProperties,
-                                       TeamsAtlasUserService teamsAtlasUserService) {
+                                       AoService aoService) {
         this.propertiesClient = propertiesClient;
         this.applicationProperties = applicationProperties;
         this.signalRService = signalRService;
         this.monitorJob = monitorJob;
         this.keysService = keysService;
         this.hostProperties = hostProperties;
-        this.teamsAtlasUserService = teamsAtlasUserService;
+        this.aoService = aoService;
     }
 
     void onInstalled() {
@@ -57,16 +54,19 @@ public class PluginLifeCycleEventHandler {
         hostProperties.setApplicationProperties(applicationProperties);
 
         Map<String, String> properties = propertiesClient.getPropertiesOrDefaults();
+        Map<String, String> settings = propertiesClient.getSettingsOrDefaults();
 
         keysService.updateApplicationKeys(properties);
 
         propertiesClient.saveKeysToDatabase(properties);
 
+        propertiesClient.saveSettingsToDatabase(settings);
+
         signalRService.startSignalRConnection();
 
         monitorJob.registerScheduler();
 
-        teamsAtlasUserService.updateDbToAoObjects();
+        aoService.updateDbToAoObjects();
     }
 
     void onUninstalled() {

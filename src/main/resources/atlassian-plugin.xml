@@ -30,6 +30,7 @@
         <description>The module configuring the Active Objects service used by this plugin</description>
         <entity>com.microsoft.teams.ao.TeamsAtlasUser</entity>
         <entity>com.microsoft.teams.ao.AppKeys</entity>
+        <entity>com.microsoft.teams.ao.AppSettings</entity>
     </ao>
 
     <servlet key="admin-servlet" class="com.microsoft.teams.servlets.ConfigPageServlet" name="adminPageServlet">

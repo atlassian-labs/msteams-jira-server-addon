@@ -123,15 +123,6 @@ public class TeamsAtlasUserServiceImplTest {
     }
 
     @Test
-    public void updateDbToAoObjects() {
-        ActiveObjects activeObjects = mock(ActiveObjects.class);
-        atlasUserService = new TeamsAtlasUserServiceImpl(activeObjects);
-        doNothing().when(activeObjects).migrateDestructively(AppKeys.class, TeamsAtlasUser.class);
-        atlasUserService.updateDbToAoObjects();
-        verify(activeObjects).migrateDestructively(AppKeys.class, TeamsAtlasUser.class);
-    }
-
-    @Test
     public void findingUserByUsernameTest() {
         activeObjects.migrate(TeamsAtlasUser.class);
         atlasUserService.add(keys);
