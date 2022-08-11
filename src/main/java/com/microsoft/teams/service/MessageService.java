@@ -17,15 +17,13 @@ public class MessageService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MessageService.class);
 
-    private static final String FILTER_LIST_ENDPOINT = "api/2/filter";
-    private static final String PROJECT_LIST_ENDPOINT = "api/2/project";
+    private static final String SEARCH_PROJECT_LIST_ENDPOINT = "api/2/projects/picker";
     public static final String INVALID_JWT_TOKEN = "Invalid JWT token";
 
     private final AzureActiveDirectoryService azureAdService;
     private ProcessMessageStrategy strategy;
 
-    private final GetFiltersMessageHandler filterMessage;
-    private final GetProjectsMessageHandler projectMessage;
+    private final SearchProjectsMessageHandler searchProjectMessage;
     private final RequestMessageHandler requestMessage;
     private final CommandMessageHandler commandMessage;
     private final ImageHelper imageHelper;
@@ -34,16 +32,14 @@ public class MessageService {
 
     @Autowired
     public MessageService(AzureActiveDirectoryService azureAdService,
-                          GetFiltersMessageHandler filterMessage,
-                          GetProjectsMessageHandler projectMessage,
+                          SearchProjectsMessageHandler searchProjectMessage,
                           RequestMessageHandler requestMessage,
                           AuthParamMessageHandler authParamMessageHandler,
                           CommandMessageHandler commandMessage,
                           ImageHelper imageHelper,
                           TeamsMessageCreator teamsMessageCreator) {
         this.azureAdService = azureAdService;
-        this.filterMessage = filterMessage;
-        this.projectMessage = projectMessage;
+        this.searchProjectMessage = searchProjectMessage;
         this.requestMessage = requestMessage;
         this.commandMessage = commandMessage;
         this.imageHelper = imageHelper;
@@ -73,10 +69,8 @@ public class MessageService {
     	if (teamsMsgObj instanceof AuthParamMessage) {
         	strategy = authParamMessageHandler;
         } else if (teamsMsgObj instanceof RequestMessage) {
-        	if (((RequestMessage) teamsMsgObj).getRequestUrl().endsWith(FILTER_LIST_ENDPOINT)) {
-                strategy = filterMessage;
-            } else if (((RequestMessage) teamsMsgObj).getRequestUrl().endsWith(PROJECT_LIST_ENDPOINT)) {
-                strategy = projectMessage;
+        	if (((RequestMessage) teamsMsgObj).getRequestUrl().contains(SEARCH_PROJECT_LIST_ENDPOINT)) {
+                strategy = searchProjectMessage;
             } else {
                 strategy = requestMessage;
             }
