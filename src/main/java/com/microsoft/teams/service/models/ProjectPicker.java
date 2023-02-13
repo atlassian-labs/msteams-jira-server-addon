@@ -2,13 +2,10 @@ package com.microsoft.teams.service.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.google.common.collect.ImmutableMap;
 
-import java.util.*;
 import java.net.URI;
 
-public class Project {
-
+public class ProjectPicker{
     @SerializedName("id")
     @Expose
     private String id;
@@ -18,9 +15,9 @@ public class Project {
     @SerializedName("key")
     @Expose
     private String key;
-    @SerializedName("avatarUrls")
+    @SerializedName("avatar")
     @Expose
-    private Map<String, URI> avatarUrls;
+    private URI avatar;
 
     public String getId() {
         return id;
@@ -46,20 +43,11 @@ public class Project {
         this.key = key;
     }
 
-    public Map<String, URI> getAvatarUrls() {
-        return avatarUrls;
+    public URI getAvatar() {
+        return avatar;
     }
 
-    public void setAvatarUrls(Map<String, URI> avatarUrls) {
-        this.avatarUrls = avatarUrls;
-    }
-
-    @Override
-    public String toString() {
-        return "Project{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", key='" + key + '\'' +
-                '}';
+    public void setAvatar(URI avatar) {
+        this.avatar = avatar;
     }
 }

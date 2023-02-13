@@ -35,6 +35,7 @@ public class ConfigPageServlet extends HttpServlet {
     private static final String EMBED_AVATARS = "embed-avatars";
     private static final String EMBED_PROJECT_AVATARS = "embed-project-avatars";
     private static final String PLUGIN_XSRF_TOKEN = "plugin.xsrf.token";
+    private static final String ATL_TOKEN = "atl_token";
 
     private final TemplateRenderer renderer;
     private final RedirectHelper redirectHelper;
@@ -70,7 +71,7 @@ public class ConfigPageServlet extends HttpServlet {
                 XsrfTokenGenerator xsrfTokenGenerator = ComponentAccessor.getComponentOfType(XsrfTokenGenerator.class);
                 String token = xsrfTokenGenerator.generateToken(request);
                 Map<String, Object> parameters = new HashMap<>(buildContext());
-                parameters.put("atl_token", token);
+                parameters.put(ATL_TOKEN, token);
                 response.addCookie(new Cookie(PLUGIN_XSRF_TOKEN, token));
 
                 renderer.render("templates/admin.vm", parameters, response.getWriter());
@@ -83,15 +84,17 @@ public class ConfigPageServlet extends HttpServlet {
     @Override
     @RequiresXsrfCheck
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
-        XsrfTokenGenerator xsrfTokenGenerator = ComponentAccessor.getComponentOfType(XsrfTokenGenerator.class);
-        String token = xsrfTokenGenerator.getToken(request);
-
         String pluginToken = Arrays.stream(request.getCookies())
                 .filter(c -> c.getName().equals(PLUGIN_XSRF_TOKEN))
                 .findFirst()
                 .map(Cookie::getValue)
                 .orElse(null);
-        if (pluginToken == null || !xsrfTokenGenerator.validateToken(request, token) || !pluginToken.equals(token)) return;
+
+        Optional<String> atl_token = Optional.ofNullable(request.getParameter(ATL_TOKEN));
+
+        LOG.debug("Received tokens and data in doPost. Request = {}, pluginToken = {}, atlToken = {}", request, pluginToken, atl_token.get());
+
+        if (pluginToken == null && !atl_token.isPresent() && !pluginToken.equals(atl_token.get())) return;
 
         Optional<String> doEmbedIcons = Optional.ofNullable(request.getParameter(EMBED_ICONS));
         if(doEmbedIcons.isPresent() && !pluginImageSettings.getEmbedIconsSetting()) {

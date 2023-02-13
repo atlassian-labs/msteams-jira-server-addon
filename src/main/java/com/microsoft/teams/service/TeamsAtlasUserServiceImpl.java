@@ -2,7 +2,6 @@ package com.microsoft.teams.service;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import com.microsoft.teams.ao.AppKeys;
 import com.microsoft.teams.ao.TeamsAtlasUser;
 import net.java.ao.Query;
 import org.slf4j.Logger;
@@ -55,11 +54,6 @@ public class TeamsAtlasUserServiceImpl implements TeamsAtlasUserService {
 
     private TeamsAtlasUser retrieveFirstTeamsAtlasUser(List<TeamsAtlasUser> usersByTeamsId) {
         return usersByTeamsId.get(0);
-    }
-
-    @Override
-    public void updateDbToAoObjects() {
-            activeObjects.migrateDestructively(AppKeys.class, TeamsAtlasUser.class);
     }
 
     @Override

@@ -24,9 +24,7 @@ public class MessageServiceTest {
     @Mock
     private AuthParamMessageHandler authMessage;
     @Mock
-    private GetFiltersMessageHandler filtersMessage;
-    @Mock
-    private GetProjectsMessageHandler projectsMessage;
+    private SearchProjectsMessageHandler searchProjectMessage;
     @Mock
     private RequestMessageHandler requestMessage;
     @Mock
@@ -47,7 +45,7 @@ public class MessageServiceTest {
     @Before
     public void setUp() {
         teamsMessageCreator = new TeamsMessageCreatorImpl();
-        messageService = new MessageService(azureAdService, filtersMessage, projectsMessage, requestMessage, authMessage, commandMessage, imageHelper, teamsMessageCreator);
+        messageService = new MessageService(azureAdService, searchProjectMessage, requestMessage, authMessage, commandMessage, imageHelper, teamsMessageCreator);
     }
 
     @Test

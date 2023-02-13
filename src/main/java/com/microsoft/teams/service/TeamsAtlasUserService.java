@@ -19,6 +19,4 @@ public interface TeamsAtlasUserService {
     void deleteAoObject(String msTeamsUserId);
 
     void deleteAll();
-
-    void updateDbToAoObjects();
 }

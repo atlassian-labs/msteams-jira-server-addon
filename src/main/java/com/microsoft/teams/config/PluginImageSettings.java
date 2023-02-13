@@ -14,4 +14,7 @@ public interface PluginImageSettings {
 
     void setEmbedProjectAvatarsSetting(boolean doEmbedAvatars);
 
+    boolean hasChanged();
+
+    void resetObservableState();
 }
