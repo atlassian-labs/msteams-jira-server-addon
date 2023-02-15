@@ -61,11 +61,11 @@ public class ExceptionHelpers {
 
         if (LOG != null && level != null) {
             switch (level) {
-                case INFO: LOG.info(extendedStackTrace); break;
-                case WARN: LOG.warn(extendedStackTrace); break;
-                case DEBUG: LOG.debug(extendedStackTrace); break;
-                case ERROR: LOG.error(extendedStackTrace); break;
-                case TRACE: LOG.trace(extendedStackTrace); break;
+                case INFO: LOG.info(extendedStackTrace, e); break;
+                case WARN: LOG.warn(extendedStackTrace, e); break;
+                case DEBUG: LOG.debug(extendedStackTrace, e); break;
+                case ERROR: LOG.error(extendedStackTrace, e); break;
+                case TRACE: LOG.trace(extendedStackTrace, e); break;
             }
         }
     }
