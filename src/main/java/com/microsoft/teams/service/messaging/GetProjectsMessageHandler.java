@@ -19,7 +19,8 @@ import com.atlassian.jira.avatar.Avatar;
 import com.atlassian.jira.avatar.AvatarService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,7 +32,7 @@ import static com.microsoft.teams.utils.ExceptionHelpers.exceptionLogExtender;
 @Component
 public class GetProjectsMessageHandler implements ProcessMessageStrategy {
 
-    private static final Logger LOG = Logger.getLogger(GetProjectsMessageHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GetProjectsMessageHandler.class);
 
     private static final String GET_PROJECTS_FAILED_MSG = "Cannot get projects.";
 
