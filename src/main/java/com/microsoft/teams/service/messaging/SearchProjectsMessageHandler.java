@@ -17,7 +17,8 @@ import com.microsoft.teams.service.models.*;
 import com.microsoft.teams.utils.ImageHelper;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,7 @@ import static com.microsoft.teams.utils.ExceptionHelpers.exceptionLogExtender;
 @Component
 public class SearchProjectsMessageHandler implements ProcessMessageStrategy {
 
-    private static final Logger LOG = Logger.getLogger(GetProjectsMessageHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GetProjectsMessageHandler.class);
 
     private static final String SEARCH_PROJECTS_FAILED_MSG = "Cannot search projects.";
 

@@ -349,7 +349,6 @@
                 <version>${amps.version}</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <log4jProperties>src/main/resources/aps/log4j.properties</log4jProperties>
                     <productVersion>${refapp.version}</productVersion>
                     <enableQuickReload>false</enableQuickReload>
 

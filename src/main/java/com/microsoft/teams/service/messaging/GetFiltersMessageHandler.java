@@ -25,7 +25,8 @@ import com.microsoft.teams.service.models.TeamsMessage;
 import com.microsoft.teams.utils.ImageHelper;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +35,7 @@ import java.util.*;
 @Component
 public class GetFiltersMessageHandler implements ProcessMessageStrategy {
 
-    private static final Logger LOG = Logger.getLogger(GetFiltersMessageHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GetFiltersMessageHandler.class);
     private static final int PAGE_POSITION = 0;
     private static final int PAGE_WIDTH = 50;
     private static final String FILTER_NAME_PARAMETER = "filterName";
@@ -43,7 +44,6 @@ public class GetFiltersMessageHandler implements ProcessMessageStrategy {
     private final TeamsAtlasUserServiceImpl userService;
     private final RequestService requestService;
     private final ImageHelper imageHelper;
-    private final JiraThreadLocalUtil jiraThreadLocalUtil;
 
     @Autowired
     public GetFiltersMessageHandler(TeamsAtlasUserServiceImpl userService,
@@ -53,7 +53,6 @@ public class GetFiltersMessageHandler implements ProcessMessageStrategy {
         this.userService = userService;
         this.requestService = requestService;
         this.imageHelper = imageHelper;
-        this.jiraThreadLocalUtil = jiraThreadLocalUtil;
     }
 
     @Override
@@ -93,7 +92,6 @@ public class GetFiltersMessageHandler implements ProcessMessageStrategy {
         long startTime = System.currentTimeMillis();
 
         try {
-            jiraThreadLocalUtil.preCall();
             filtersResult = ComponentAccessor.getComponent(SearchRequestService.class)
                     .search(jsc, searchParams, PAGE_POSITION, PAGE_WIDTH);
 
@@ -107,8 +105,6 @@ public class GetFiltersMessageHandler implements ProcessMessageStrategy {
                     filterName, ex.getClass().getCanonicalName(), ex.getMessage()));
 
             return new ResponseMessage().withCode(200).withMessage("Filter can't be parsed").build();
-        } finally {
-            jiraThreadLocalUtil.postCall(LOG);
         }
 
         if (filtersResult != null) {

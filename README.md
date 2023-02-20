@@ -14,7 +14,7 @@ or by manually downloading plugin JAR files from Marketplace pages for [Jira](ht
 Links to the official documentation are specified on Marketplace pages.
 
 Supported products (on 5 Mar, 2021). See [EOL policy](https://confluence.atlassian.com/support/atlassian-support-end-of-life-policy-201851003.html).
-* Jira Server 7.0.0 - 8.20.3 JDK 8.
+* Jira Server 7.0.0 - 9.6.0 JDK 8.
 
 ## A note on future development plans
 
@@ -48,7 +48,18 @@ When Jira Server releases new versions, we will validate the compatibility of th
 
 ### Debug addon
 1. Create Remote JVM Debug with default settings and start via `atlas-debug --product jira`.
-1. To recompile plugin use `atlas-mvn package`.
+2. To recompile plugin use `atlas-mvn package`.
+
+## Enable logging
+1. Log-In as an admin user and go to Jira Administration > System;
+1. In the left column press "Logging and profiling" under System support;
+1. Under "Default Loggers" section press Configure logging level for another package;
+1. Add next packages one by one and set Logging level DEBUG for each:
+   - com.microsoft.teams.lifecycle
+   - com.microsoft.teams.lifecycle.scheduler
+   - com.microsoft.teams.oauth
+   - com.microsoft.teams.service
+   - com.microsoft.teams.utils
 
 ## Documentation
 
