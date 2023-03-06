@@ -33,8 +33,8 @@ When Jira Server releases new versions, we will validate the compatibility of th
 
 ### Build addon
 1. Go to [ADDON_FOLDER]\src\main\resources and edit integration.properties file:
-    - Add value for aud_claim=**__JIRA_BOT_ID__**, where **__JIRA_BOT_ID__** uniques ID of your JIRA Bot Application
-    - Add value for signalr_hub_url=https://**__NGROK_URL__**/JiraGateway?atlasId=%s&atlasUrl=%s&pluginVersion=%s, where **__NGROK_URL__** url of your local instance of Jira app run on ngrok.
+    - Add value for aud_claim=**__MICROSOFT_BOT_APPLICATION_ID__**, where **__MICROSOFT_BOT_APPLICATION_ID__** uniques ID of your JIRA Bot Application
+    - Add value for signalr_hub_url=https://**__MICROSOFT_BOT_APPLICATION_BASE_URL__**/JiraGateway?atlasId=%s&atlasUrl=%s&pluginVersion=%s, where **__MICROSOFT_BOT_APPLICATION_BASE_URL__** url of hosted application or your local instance of Jira Server app run on ngrok or another tunnel.
     - Save changes.
 1. Run next command from the root folder [ADDON_FOLDER]: "[ATLASSIAN_PLUGIN_FOLDER]\ [APACHE_MAVEN_FOLDER]\bin\mvn package -DskipTests". For example: C:\Applications\Atlassian\atlassian-plugin-sdk-8.0.16\apache-maven-3.5.4\bin\mvn package -DskipTests
 1. Wait until command successfully finished.
