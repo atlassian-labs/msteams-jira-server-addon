@@ -59,10 +59,13 @@ public class IssueEventListener implements InitializingBean, DisposableBean {
     @Override
     public void afterPropertiesSet() {
         try {
+            // Uncomment this part of the code if you want to listen to Jira events
+            /*
             eventPublisher.register(this);
             IssueEventConsumer issueEventConsumer = new IssueEventConsumer(queue, teamsAtlasUserService, appKeysService, appProperties);
             issueEventConsumer.consume();
             LOG.info("afterPropertiesSet() info: Issue event listener has been successfully registered and started");
+            */
         } catch (Exception e) {
             exceptionLogExtender("afterPropertiesSet() error ", Level.ERROR, e);
         }
@@ -73,8 +76,11 @@ public class IssueEventListener implements InitializingBean, DisposableBean {
      */
     @Override
     public void destroy() {
+        // Uncomment this part of the code if you want to listen to Jira events
+        /*
         LOG.info("Disabling plugin");
         eventPublisher.unregister(this);
+         */
     }
 
     @EventListener

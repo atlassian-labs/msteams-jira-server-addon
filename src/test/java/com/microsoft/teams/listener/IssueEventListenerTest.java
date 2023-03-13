@@ -32,17 +32,24 @@ public class IssueEventListenerTest {
 
     @Test
     public void afterPropertiesSetThatRegisteredTest() {
+        // Uncomment this part of the code if you want to listen to Jira events
+        /*
         IssueEventListener issueEventListener = new IssueEventListener(eventPublisher, teamsAtlasUserService, appKeysService, appProperties);
         issueEventListener.afterPropertiesSet();
 
         verify(eventPublisher).register(any());
+
+         */
     }
 
     @Test
     public void verifyThatDestroyedTest() {
+        // Uncomment this part of the code if you want to listen to Jira events
+        /*
         IssueEventListener issueEventListener = new IssueEventListener(eventPublisher, teamsAtlasUserService, appKeysService, appProperties);
         issueEventListener.destroy();
 
         verify(eventPublisher).unregister(any());
+        */
     }
 }
