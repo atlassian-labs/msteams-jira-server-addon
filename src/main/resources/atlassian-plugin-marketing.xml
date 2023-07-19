@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<atlassian-plugin-marketing>    
+    <compatibility>
+        <product name="jira" min="7.0" max="8.3.2"/>
+    </compatibility>    
+    <screenshots>
+        <screenshot image="images/01_highlight1_ss.jpg"/>
+        <screenshot image="images/03_highlight2_ss.jpg"/>
+        <screenshot image="images/05_highlight3_ss.jpg"/>
+    </screenshots>
+</atlassian-plugin-marketing>

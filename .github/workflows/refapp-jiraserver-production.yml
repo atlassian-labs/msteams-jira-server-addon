@@ -1,0 +1,70 @@
+name: Refapp JiraServer Production
+
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y.%m.')"
+
+      - name: Delete users backdoor servlet
+        uses: JesseTG/rm@v1.0.2
+        with:
+          path: src/main/java/com/microsoft/teams/servlets/TeamsAtlasUserServlet.java
+
+      - name: Delete users backdoor servlet test
+        uses: JesseTG/rm@v1.0.2
+        with:
+          path: src/test/java/com/microsoft/teams/servlets/TeamsAtlasUserServletTest.java
+
+      - name: Delete users backdoor resource
+        uses: Mudlet/xmlstarlet-action@master
+        with:
+          args: ed --inplace -d "/atlassian-plugin/servlet[@key='test']" src/main/resources/atlassian-plugin.xml
+
+      - name: Replace ArtifactId Value
+        uses: Mudlet/xmlstarlet-action@master
+        with:
+          args: ed --inplace  -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:artifactId" -v microsoft-teams pom.xml
+
+      - name: Replace Version Value
+        uses: Mudlet/xmlstarlet-action@master
+        with:
+          args: ed --inplace  -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:version" -v ${{ steps.date.outputs.date }}${{ github.run_number }} pom.xml
+
+      - name: Replace FinalName Value
+        uses: Mudlet/xmlstarlet-action@master
+        with:
+          args: ed --inplace  -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:build/s:finalName" -v microsoft-teams-${{ steps.date.outputs.date }}${{ github.run_number }} pom.xml
+
+      - name: Run a powershell script
+        run: ./setEnvironmentProperties.ps1 "src/main/resources/integration.properties" "c8e573e8-b3ff-4c89-afbd-d75731ba97fc" "microsoft-teams" "https://jira-server.msteams-atlassian.com/JiraGateway?atlasId=%s&atlasUrl=%s&pluginVersion=%s" ${{ steps.date.outputs.date }}${{ github.run_number }} "https://jira-server.msteams-atlassian.com"
+        shell: pwsh
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.2.3
+        with:
+          name: RefAppAddon.Production.${{ steps.date.outputs.date }}${{ github.run_number }}
+          path: ${{ github.workspace }}/target/*.jar

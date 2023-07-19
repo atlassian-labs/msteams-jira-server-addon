@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>$i18n.getText("config-panel.title")</title>
+    <meta name="decorator" content="atl.admin">
+</head>
+<body>
+<form id="admin" class="aui">
+    <div class="field-group">
+        <h2>$i18n.getText("config-panel.greeting")</h2>
+    </div>
+    <div class="field-group">
+        <ul>
+            <li>$i18n.getText("config-panel.application-link.step1")</li>
+            <li>$i18n.getText("config-panel.application-link.step2")</li>
+            <li>$i18n.getText("config-panel.application-link.step3")</li>
+            <li>$i18n.getText("config-panel.application-link.step4")</li>
+            <li>
+                <p>$i18n.getText("config-panel.application-link.step5")</p>
+                <p>
+                    <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/oauth-applink1.png"
+                         width="400" )>
+                </p>
+            </li>
+            <li>$i18n.getText("config-panel.application-link.step6")</li>
+            <ul>
+                <li>Consumer key = <strong id="consumerKey">$consumerKey</strong>
+                    <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/copy-to-clipboard.png" alt="copy" style="height: 15px;cursor: pointer;" onclick="CopyToClipboard('#consumerKey')" title="Copy to clipboard"></li>
+                <li>Consumer name = <strong id="consumerName">$consumerName</strong>
+                    <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/copy-to-clipboard.png" alt="copy" style="height: 15px;cursor: pointer;" onclick="CopyToClipboard('#consumerName')" title="Copy to clipboard"></li>
+                <li>Public key =
+                    <div style="display: flex;">
+                        <div style="width: 300px; padding: 10px; border: 1px solid grey; word-wrap: break-word;" id="publicKey">$publicKey</div>
+                        <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/copy-to-clipboard.png" alt="copy" style="height: 15px;cursor: pointer;" onclick="CopyToClipboard('#publicKey')" title="Copy to clipboard">
+                    </div>
+                </li>
+            </ul>
+            <li>
+                <p>$i18n.getText("config-panel.application-link.step7")</p>
+                <p>
+                    <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/oauth-applink2.png"
+                         width="850">
+                </p>
+            </li>
+            <li>$i18n.getText("config-panel.application-link.step8")</li>
+            <li>$i18n.getText("config-panel.application-link.step9")<strong id="atlasId">$atlasId</strong>
+                <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/copy-to-clipboard.png" alt="" style="height: 15px;cursor: pointer;" onclick="CopyToClipboard('#atlasId')" title="Copy to clipboard">
+                <p>
+                    <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/teams-auth-jira-id.png"
+                         width="286">
+                </p>
+            </li>
+
+        </ul>
+    </div>
+    <div class="field-group">
+        <h4>$i18n.getText("config-panel.connection-state")
+            #if($isConnectionActive)
+                <font color="green">ACTIVE</font>&emsp;
+            #else
+                <font color="red">INACTIVE</font>&emsp;
+            #end
+            <button onclick="location.href = '$atlasHome/plugins/servlet/signalr/reconnect'" id="reconnect-button" type="button">Reconnect</button>
+        </h4>
+
+    </div>
+</form>
+<form id="settingsForm" action='$atlasHome/plugins/servlet/xproduct/admin' method="post" class="aui" target="targetFrame">
+    <div class="field-group">
+        <h2>$i18n.getText("config-panel.image-setting")</h2>
+            #if($embedIcons)
+                <input style="margin-top: 10px;" type="checkbox" onchange="$('#settingsForm').submit();" name="embed-icons"
+                       checked> $i18n.getText("config-panel.image-setting.embed-icons")
+            #else
+                <input style="margin-top: 10px;" type="checkbox" onchange="$('#settingsForm').submit();" name="embed-icons"> $i18n.getText("config-panel.image-setting.embed-icons")
+            #end
+            <p>$i18n.getText("config-panel.image-setting.embed-icons.description")</p>
+            #if($embedAvatars)
+                <input style="margin-top: 10px;" type="checkbox" onchange="$('#settingsForm').submit();" name="embed-avatars" checked> $i18n.getText("config-panel.image-setting.embed-avatars")
+            #else
+                <input style="margin-top: 10px;" type="checkbox" onchange="$('#settingsForm').submit();" name="embed-avatars"> $i18n.getText("config-panel.image-setting.embed-avatars")
+            #end
+            <p>$i18n.getText("config-panel.image-setting.embed-avatars.description")</p>
+            #if($embedProjectAvatars)
+                <input style="margin-top: 10px;" type="checkbox" onchange="$('#settingsForm').submit();" name="embed-project-avatars" checked> $i18n.getText("config-panel.image-setting.embed-project-avatars")
+            #else
+                <input style="margin-top: 10px;" type="checkbox" onchange="$('#settingsForm').submit();" name="embed-project-avatars"> $i18n.getText("config-panel.image-setting.embed-project-avatars")
+            #end
+            <p>$i18n.getText("config-panel.image-setting.embed-project-avatars.description")</p>
+            <input type="hidden" name="atl_token" value="$atl_token">
+    </div>
+</form>
+<iframe width="0" height="0" border="0" name="targetFrame" id="targetFrame" style="display: none;"></iframe>
+<div class="field-group">
+    <button onclick="location.href = '$atlasHome/plugins/servlet/upm'" id="back-button" type="button">Go Back</button>
+</div>
+<script>
+    function CopyToClipboard(element) {
+        let temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        }
+</script>
+</body>
+</html>

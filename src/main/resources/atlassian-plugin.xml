@@ -1,0 +1,52 @@
+<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+        <param name="plugin-icon">images/pluginIcon.png</param>
+        <param name="plugin-logo">images/pluginLogo.png</param>
+        <param name="atlassian-data-center-status">compatible</param>
+        <param name="atlassian-data-center-compatible">true</param>
+        <param name="plugin-type">both</param>
+
+        <param name="configure.url">/plugins/servlet/xproduct/admin</param>
+    </plugin-info>
+
+    <!-- create our i18n resource -->
+    <resource type="i18n" name="i18n" location="integration"/>
+    
+    <!-- create our web resources -->
+    <web-resource key="integration-resources" name="integration Web Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        
+        <resource type="download" name="integration.css" location="/css/integration.css"/>
+        <resource type="download" name="integration.js" location="/js/integration.js"/>
+        <resource type="download" name="images/" location="/images"/>
+
+        <context>integration</context>
+    </web-resource>
+
+    <ao key="ao-module">
+        <description>The module configuring the Active Objects service used by this plugin</description>
+        <entity>com.microsoft.teams.ao.TeamsAtlasUser</entity>
+        <entity>com.microsoft.teams.ao.AppKeys</entity>
+        <entity>com.microsoft.teams.ao.AppSettings</entity>
+    </ao>
+
+    <servlet key="admin-servlet" class="com.microsoft.teams.servlets.ConfigPageServlet" name="adminPageServlet">
+        <url-pattern>/xproduct/admin</url-pattern>
+    </servlet>
+
+    <servlet key="reconnect-servlet" class="com.microsoft.teams.servlets.ReconnectServlet" name="reconnectServlet">
+        <url-pattern>/signalr/reconnect</url-pattern>
+    </servlet>
+
+    <servlet key="test" class="com.microsoft.teams.servlets.TeamsAtlasUserServlet" name="mappingServlet">
+        <url-pattern>/user/mapping</url-pattern>
+    </servlet>
+
+    <rest name="plugin Rest Api" key="rest-api-resource" path="/teams" version="1.0">
+        <description key="rest-api-description">The My Rest Resource Plugin</description>
+    </rest>
+
+</atlassian-plugin>
