@@ -1,0 +1,1 @@
+FROM atlassian/default-image:4

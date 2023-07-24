@@ -1,0 +1,12 @@
+#  Pipeline for building and publishing msteams-jira-addon project
+image: atlassian/default-image:4
+
+
+definitions:
+  steps:
+    - step: &dockerImage
+        name: Prepare custom Docker image
+
+pipelines:
+  default:
+    - step: *dockerImage
