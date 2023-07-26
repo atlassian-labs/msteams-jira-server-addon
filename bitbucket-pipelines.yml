@@ -63,6 +63,13 @@ definitions:
           script:
             # build package and run tests
             - atlas-mvn package
+    - step: &createTag
+        name: Create tag
+        script:
+          - TAG_NAME=$(date +%Y.%m.%d)
+          - echo "Creating new tag ${TAG_NAME} in ${BITBUCKET_BRANCH}"
+          - git tag -am "Tag ${TAG_NAME}" $TAG_NAME
+          - git push origin $BITBUCKET_BRANCH
 
 pipelines:
   default:
@@ -73,6 +80,7 @@ pipelines:
               includePaths:
                 - 'docker/**'
     - step: *buildAndTest
+    - step: *createTag
   custom:
     buildDockerImage:
       - step:
