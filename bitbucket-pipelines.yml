@@ -68,6 +68,7 @@ definitions:
         script:
           - TAG_NAME=$(date +%Y.%m.%d)
           - echo "Creating new tag ${TAG_NAME} in ${BITBUCKET_BRANCH}"
+          - git remote set-url origin ${BITBUCKET_GIT_SSH_ORIGIN}
           - git tag -am "Tag ${TAG_NAME}" $TAG_NAME
           - git push origin $BITBUCKET_BRANCH
 
