@@ -80,11 +80,12 @@ pipelines:
               includePaths:
                 - 'docker/**'
     - step: *buildAndTest
-    - step: *createTag
   custom:
     buildDockerImage:
       - step:
           *dockerImage
+      - step:
+          *createTag
   branches:
     master:
       - step:
