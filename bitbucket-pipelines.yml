@@ -28,7 +28,7 @@ definitions:
           username: netrunners
           password: $PIPELINES_JWT_TOKEN
         script:
-          - PACKAGE_VERSION=$(date +%Y.%m.).$BITBUCKET_BUILD_NUMBER
+          - PACKAGE_VERSION=$(date +%Y.%m).$BITBUCKET_BUILD_NUMBER
           - PACKAGE_ZIP_NAME=$PACKAGE_ZIP_NAME_PREFIX$PACKAGE_VERSION
           # Remove internal servlets
           - rm ./src/main/java/com/microsoft/teams/servlets/TeamsAtlasUserServlet.java;
