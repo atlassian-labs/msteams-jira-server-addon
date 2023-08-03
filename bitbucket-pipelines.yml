@@ -28,11 +28,12 @@ definitions:
           username: netrunners
           password: $PIPELINES_JWT_TOKEN
         script:
-          - PACKAGE_VERSION=$(date +%Y.%m.%d).$BITBUCKET_BUILD_NUMBER
+          - PACKAGE_VERSION=$(date +%Y.%m).$BITBUCKET_BUILD_NUMBER
           - PACKAGE_ZIP_NAME=$PACKAGE_ZIP_NAME_PREFIX$PACKAGE_VERSION
           # Remove internal servlets
           - rm ./src/main/java/com/microsoft/teams/servlets/TeamsAtlasUserServlet.java;
           - rm ./src/test/java/com/microsoft/teams/servlets/TeamsAtlasUserServletTest.java
+          - xmlstarlet edit -L -d "/atlassian-plugin/servlet[@key='test']" src/main/resources/atlassian-plugin.xml
           # Replace ArtifactId Value
           - xmlstarlet edit -L -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:artifactId" -v $PACKAGE_NAME pom.xml
           - echo "`xmlstarlet sel -N s=http://maven.apache.org/POM/4.0.0 -t -v "/s:project/s:artifactId" pom.xml`"
@@ -63,6 +64,13 @@ definitions:
           script:
             # build package and run tests
             - atlas-mvn package
+    - step: &createTag
+        name: Create tag
+        script:
+          - TAG_NAME=$(date +%Y.%m.%d)
+          - echo "Creating new tag ${TAG_NAME} in ${BITBUCKET_BRANCH}"
+          - git tag -am "Tag ${TAG_NAME}" $TAG_NAME
+          - git push origin $TAG_NAME
 
 pipelines:
   default:
@@ -77,6 +85,8 @@ pipelines:
     buildDockerImage:
       - step:
           *dockerImage
+      - step:
+          *createTag
   branches:
     master:
       - step:
