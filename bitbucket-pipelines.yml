@@ -85,6 +85,7 @@ pipelines:
     buildDockerImage:
       - step:
           *dockerImage
+    createNewTag:
       - step:
           *createTag
   branches:
