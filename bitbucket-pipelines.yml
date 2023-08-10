@@ -63,7 +63,7 @@ definitions:
             password: $PIPELINES_JWT_TOKEN
           script:
             # build package and run tests
-            - atlas-mvn package
+            - atlas-mvn test
     - step: &createTag
         name: Create tag
         script:
