@@ -62,15 +62,33 @@ definitions:
             username: netrunners
             password: $PIPELINES_JWT_TOKEN
           script:
-            # build package and run tests
+            # Build package and run tests
             - atlas-mvn test
     - step: &createTag
         name: Create tag
         script:
           - TAG_NAME=$(date +%Y.%m.%d)
-          - echo "Creating new tag ${TAG_NAME} in ${BITBUCKET_BRANCH}"
+          - echo "Creating new tag ${TAG_NAME}"
           - git tag -am "Tag ${TAG_NAME}" $TAG_NAME
           - git push origin $TAG_NAME
+    - step: &snyk-scan
+        name: Run Snyk scan
+        image:
+          name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn
+          username: netrunners
+          password: $PIPELINES_JWT_TOKEN
+        script:
+          - pipe: atlassian/artifactory-sidekick:v1
+          - source .artifactory/activate.sh
+          # Build package and skip tests
+          - atlas-mvn package -DskipTests
+          # Add mvn to PATH
+          - export MAVEN_HOME=$(echo "`atlas-version`" | grep -oP '(?<=ATLAS Maven Home:\ )(.)+$')/bin
+          - export PATH=${PATH}:${MAVEN_HOME}
+          # Install Snyk
+          - npm install -g snyk
+          # Run Snyk monitor
+          - snyk monitor --all-projects
 
 pipelines:
   default:
@@ -88,6 +106,8 @@ pipelines:
     createNewTag:
       - step:
           *createTag
+    runSnyk:
+      - step: *snyk-scan
   branches:
     master:
       - step:
