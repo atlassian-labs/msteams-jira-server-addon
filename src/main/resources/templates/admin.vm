@@ -11,18 +11,21 @@
     </div>
     <div class="field-group">
         <ul>
-            <li>$i18n.getText("config-panel.application-link.step1")</li>
+            <li>$i18n.getText("config-panel.application-link.step1.1")
+                <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/administration_icon.png" alt="administration" style="height: 15px;" title="Administration">
+                $i18n.getText("config-panel.application-link.step1.2")</li>
             <li>$i18n.getText("config-panel.application-link.step2")</li>
             <li>$i18n.getText("config-panel.application-link.step3")</li>
             <li>$i18n.getText("config-panel.application-link.step4")</li>
+            <li>$i18n.getText("config-panel.application-link.step5")</li>
             <li>
-                <p>$i18n.getText("config-panel.application-link.step5")</p>
+                <p>$i18n.getText("config-panel.application-link.step6")</p>
                 <p>
                     <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/oauth-applink1.png"
                          width="400" )>
                 </p>
             </li>
-            <li>$i18n.getText("config-panel.application-link.step6")</li>
+            <li>$i18n.getText("config-panel.application-link.step7")</li>
             <ul>
                 <li>Consumer key = <strong id="consumerKey">$consumerKey</strong>
                     <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/copy-to-clipboard.png" alt="copy" style="height: 15px;cursor: pointer;" onclick="CopyToClipboard('#consumerKey')" title="Copy to clipboard"></li>
@@ -36,14 +39,14 @@
                 </li>
             </ul>
             <li>
-                <p>$i18n.getText("config-panel.application-link.step7")</p>
+                <p>$i18n.getText("config-panel.application-link.step8")</p>
                 <p>
                     <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/oauth-applink2.png"
                          width="850">
                 </p>
             </li>
-            <li>$i18n.getText("config-panel.application-link.step8")</li>
-            <li>$i18n.getText("config-panel.application-link.step9")<strong id="atlasId">$atlasId</strong>
+            <li>$i18n.getText("config-panel.application-link.step9")</li>
+            <li>$i18n.getText("config-panel.application-link.step10")<strong id="atlasId">$atlasId</strong>
                 <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/copy-to-clipboard.png" alt="" style="height: 15px;cursor: pointer;" onclick="CopyToClipboard('#atlasId')" title="Copy to clipboard">
                 <p>
                     <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/teams-auth-jira-id.png"
