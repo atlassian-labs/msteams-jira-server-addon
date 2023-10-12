@@ -65,7 +65,7 @@ public class ConfigPageServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         try {
-            if (redirectHelper.isUserLoggedInAndAdmin(request, response)){
+            if (redirectHelper.isUserLoggedInAndAdmin(request, response)) {
                 response.setContentType("text/html;charset=utf-8");
 
                 XsrfTokenGenerator xsrfTokenGenerator = ComponentAccessor.getComponentOfType(XsrfTokenGenerator.class);
@@ -94,26 +94,28 @@ public class ConfigPageServlet extends HttpServlet {
 
         LOG.debug("Received tokens and data in doPost. Request = {}, pluginToken = {}, atlToken = {}", request, pluginToken, atl_token.get());
 
-        if (pluginToken == null && !atl_token.isPresent() && !pluginToken.equals(atl_token.get())) return;
+        if (pluginToken == null && !atl_token.isPresent() && !pluginToken.equals(atl_token.get())) {
+            return;
+        }
 
         Optional<String> doEmbedIcons = Optional.ofNullable(request.getParameter(EMBED_ICONS));
-        if(doEmbedIcons.isPresent() && !pluginImageSettings.getEmbedIconsSetting()) {
+        if (doEmbedIcons.isPresent() && !pluginImageSettings.getEmbedIconsSetting()) {
             pluginImageSettings.setEmbedIconsSetting(true);
-        } else if(!doEmbedIcons.isPresent() && pluginImageSettings.getEmbedIconsSetting()) {
+        } else if (!doEmbedIcons.isPresent() && pluginImageSettings.getEmbedIconsSetting()) {
             pluginImageSettings.setEmbedIconsSetting(false);
         }
 
         Optional<String> doEmbedAvatars = Optional.ofNullable(request.getParameter(EMBED_AVATARS));
-        if(doEmbedAvatars.isPresent() && !pluginImageSettings.getEmbedAvatarsSetting()) {
+        if (doEmbedAvatars.isPresent() && !pluginImageSettings.getEmbedAvatarsSetting()) {
             pluginImageSettings.setEmbedAvatarsSetting(true);
-        } else if(!doEmbedAvatars.isPresent() && pluginImageSettings.getEmbedAvatarsSetting()) {
+        } else if (!doEmbedAvatars.isPresent() && pluginImageSettings.getEmbedAvatarsSetting()) {
             pluginImageSettings.setEmbedAvatarsSetting(false);
         }
 
         Optional<String> doEmbedProjectAvatars = Optional.ofNullable(request.getParameter(EMBED_PROJECT_AVATARS));
-        if(doEmbedProjectAvatars.isPresent() && !pluginImageSettings.getEmbedProjectAvatarsSetting()) {
+        if (doEmbedProjectAvatars.isPresent() && !pluginImageSettings.getEmbedProjectAvatarsSetting()) {
             pluginImageSettings.setEmbedProjectAvatarsSetting(true);
-        } else if(!doEmbedProjectAvatars.isPresent() && pluginImageSettings.getEmbedProjectAvatarsSetting()) {
+        } else if (!doEmbedProjectAvatars.isPresent() && pluginImageSettings.getEmbedProjectAvatarsSetting()) {
             pluginImageSettings.setEmbedProjectAvatarsSetting(false);
         }
     }

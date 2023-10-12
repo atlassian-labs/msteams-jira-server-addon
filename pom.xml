@@ -42,7 +42,7 @@
         </repository>
         <repository>
             <id>jahia</id>
-            <url>http://maven.jahia.org/maven2/</url>
+            <url>https://maven.jahia.org/maven2/</url>
         </repository>
         <repository>
             <id>maven-external</id>
@@ -433,7 +433,7 @@
         <amps.version>8.0.2</amps.version>
         <plugin.testrunner.version>2.0.1</plugin.testrunner.version>
         <atlassian.spring.scanner.version>2.1.7</atlassian.spring.scanner.version>
-        <jira.version>9.10.0</jira.version>
+        <jira.version>9.0.1-QR-20220512231533</jira.version>
         <!-- This property ensures consistency between the key in atlassian-plugin.xml and the OSGi bundle's key. -->
         <atlassian.plugin.key>${project.artifactId}</atlassian.plugin.key>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

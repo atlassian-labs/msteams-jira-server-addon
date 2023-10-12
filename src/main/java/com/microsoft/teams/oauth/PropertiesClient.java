@@ -87,8 +87,9 @@ public class PropertiesClient {
         List<TeamsAtlasUser> users = userService.getUserByTeamsId(teamsId);
         if (!users.isEmpty()) {
             TeamsAtlasUser user = users.get(0);
-            if (user.getAtlasAccessToken() != null)
+            if (user.getAtlasAccessToken() != null) {
                 prop.setProperty(ACCESS_TOKEN, user.getAtlasAccessToken());
+            }
             prop.setProperty(TEAMS_ID, teamsId);
         }
         return prop;

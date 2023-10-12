@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MessageService {
-
     private static final Logger LOG = LoggerFactory.getLogger(MessageService.class);
 
     private static final String SEARCH_PROJECT_LIST_ENDPOINT = "api/2/projects/picker";
@@ -66,10 +65,10 @@ public class MessageService {
     }
 
     private void setProcessMessageStrategy(TeamsMessage teamsMsgObj) {
-    	if (teamsMsgObj instanceof AuthParamMessage) {
-        	strategy = authParamMessageHandler;
+        if (teamsMsgObj instanceof AuthParamMessage) {
+            strategy = authParamMessageHandler;
         } else if (teamsMsgObj instanceof RequestMessage) {
-        	if (((RequestMessage) teamsMsgObj).getRequestUrl().contains(SEARCH_PROJECT_LIST_ENDPOINT)) {
+            if (((RequestMessage) teamsMsgObj).getRequestUrl().contains(SEARCH_PROJECT_LIST_ENDPOINT)) {
                 strategy = searchProjectMessage;
             } else {
                 strategy = requestMessage;

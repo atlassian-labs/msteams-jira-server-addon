@@ -1,7 +1,6 @@
 package com.microsoft.teams.ao;
 
 import net.java.ao.Entity;
-import net.java.ao.Preload;
 
 public interface AppSettings extends Entity {
 

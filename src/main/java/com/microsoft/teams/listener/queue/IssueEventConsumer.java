@@ -20,7 +20,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
 import org.slf4j.Logger;
@@ -61,9 +60,9 @@ public class IssueEventConsumer {
         executor.scheduleAtFixedRate(() -> {
             IssueEvent poll;
             while (!Objects.isNull(poll = queue.poll())) {
-                try{
+                try {
                     processIssueEvent(poll);
-                } catch(Exception e) {
+                } catch (Exception e) {
                         exceptionLogExtender("consume() cannot process event ", Level.ERROR, e);
                     }
                 }

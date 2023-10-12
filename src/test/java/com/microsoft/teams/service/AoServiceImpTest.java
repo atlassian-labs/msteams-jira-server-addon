@@ -12,10 +12,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import java.util.HashMap;
 import java.util.Map;
 
-import static com.microsoft.teams.oauth.PropertiesClient.*;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 

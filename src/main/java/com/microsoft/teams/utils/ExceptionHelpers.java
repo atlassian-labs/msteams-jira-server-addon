@@ -35,8 +35,7 @@ public class ExceptionHelpers {
                 } else if (name.equals("errors")) {
                     reader.beginObject();
                     JsonToken errorToken = reader.peek();
-                    if (errorToken != JsonToken.END_OBJECT)
-                    {
+                    if (errorToken != JsonToken.END_OBJECT) {
                         return String.format("%s error: %s", StringUtils.capitalize(reader.nextName()), reader.nextString());
                     }
                     return StringUtils.EMPTY;

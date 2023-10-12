@@ -2,7 +2,6 @@ package com.microsoft.teams.service;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
-import com.microsoft.teams.ao.AppKeys;
 import com.microsoft.teams.ao.TeamsAtlasUser;
 import net.java.ao.EntityManager;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
