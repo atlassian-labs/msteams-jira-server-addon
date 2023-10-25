@@ -87,8 +87,8 @@ definitions:
           - export PATH=${PATH}:${MAVEN_HOME}
           # Install Snyk
           - npm install -g snyk
-          # Run Snyk monitor
-          - snyk monitor --all-projects
+          # Run Snyk monitor and skip all provided dependencies
+          - snyk monitor . -- -Dscope=runtime
 
 pipelines:
   default:
