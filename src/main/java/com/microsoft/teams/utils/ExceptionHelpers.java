@@ -50,13 +50,13 @@ public class ExceptionHelpers {
         return GENERIC_ERROR_MESSAGE;
     }
 
-    public static void exceptionLogExtender(String signature, Level level, Exception e) {
-        LOG.debug(signature + " Active threads count: " + Thread.activeCount());
-
-        String lineSeparator =  System.getProperty("line.separator");
-        String extendedStackTrace = signature + e.getClass().getCanonicalName() + ": "
-                + e.getMessage() + lineSeparator + "ROOT CAUSE: " + ExceptionUtils.getRootCauseMessage(e)
-                + lineSeparator + "EXCEPTION STACK TRACE: " + ExceptionUtils.getStackTrace(e);
+    public static void exceptionLogExtender(String message, Level level, Exception e) {
+        String lineSeparator = System.lineSeparator();
+        String extendedStackTrace = message
+                + lineSeparator + "EXCEPTION: " + e.getClass().getCanonicalName() + ": " + e.getMessage()
+                + lineSeparator + "ROOT CAUSE: " + ExceptionUtils.getRootCauseMessage(e)
+                + lineSeparator + "EXCEPTION STACK TRACE: " + ExceptionUtils.getStackTrace(e)
+                + lineSeparator + "ACTIVE THREADS COUNT: " + Thread.activeCount();
 
         if (LOG != null && level != null) {
             switch (level) {
