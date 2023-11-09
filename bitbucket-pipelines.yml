@@ -96,7 +96,7 @@ definitions:
           username: netrunners
           password: $PIPELINES_JWT_TOKEN
         script:
-          - atlas-mvn verify sonar:sonar -Dsonar.projectKey=msteams-jira-onprem-addon
+          - atlas-mvn verify sonar:sonar -Dsonar.projectKey=msteams-jira-onprem-addon -Pcoverage
 pipelines:
   default:
     - step:
