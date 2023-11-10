@@ -89,7 +89,14 @@ definitions:
           - npm install -g snyk
           # Run Snyk monitor and skip all provided dependencies
           - snyk monitor . -- -Dscope=runtime
-
+    - step: &staticAnalysis
+        name: SonarQube analysis
+        image:
+          name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn
+          username: netrunners
+          password: $PIPELINES_JWT_TOKEN
+        script:
+          - atlas-mvn verify sonar:sonar -Dsonar.projectKey=msteams-jira-onprem-addon -Pcoverage
 pipelines:
   default:
     - step:
@@ -99,6 +106,7 @@ pipelines:
               includePaths:
                 - 'docker/**'
     - step: *buildAndTest
+    - step: *staticAnalysis
   custom:
     buildDockerImage:
       - step:
@@ -108,6 +116,8 @@ pipelines:
           *createTag
     runSnyk:
       - step: *snyk-scan
+    runSonar:
+      - step: *staticAnalysis
   branches:
     master:
       - step:
@@ -122,3 +132,4 @@ pipelines:
           <<: *buildAndPack
           name: Build production package
           deployment: Production
+      - step: *staticAnalysis
