@@ -458,6 +458,11 @@
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>META-INF/**</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
