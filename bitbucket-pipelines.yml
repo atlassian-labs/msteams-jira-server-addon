@@ -89,6 +89,12 @@ definitions:
           - npm install -g snyk
           # Run Snyk monitor and skip all provided dependencies
           - snyk monitor . -- -Dscope=runtime
+    - step: &pushToGithub
+        name: Push changes to Github repo
+        script:
+          - git remote add github git@github.com:atlassian-labs/msteams-jira-server-addon.git
+          - git push -u github ${BITBUCKET_BRANCH}
+          - git push github --follow-tags
     - step: &staticAnalysis
         name: SonarQube analysis
         image:
@@ -133,3 +139,21 @@ pipelines:
           name: Build production package
           deployment: Production
       - step: *staticAnalysis
+    release/*:
+      - step:
+          <<: *buildAndPack
+          name: Build integration package
+          deployment: Integration
+      - step:
+          <<: *buildAndPack
+          name: Build staging package
+          deployment: Staging
+      - step:
+          <<: *buildAndPack
+          name: Build production package
+          deployment: Production
+      - step:
+          <<: *createTag
+          trigger: manual
+      - step:
+          <<: *pushToGithub
