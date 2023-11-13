@@ -19,13 +19,14 @@ public class TeamsMessageCreatorImpl implements TeamsMessageCreator {
             .create();
 
     public TeamsMessage create(String teamsMsg) throws GeneralJwtException {
-        if (teamsMsg.contains("verificationCode"))
+        if (teamsMsg.contains("verificationCode")) {
             return gson.fromJson(teamsMsg, AuthParamMessage.class);
-        else if (teamsMsg.contains("request"))
+        } else if (teamsMsg.contains("request")) {
             return gson.fromJson(teamsMsg, RequestMessage.class);
-        else if (teamsMsg.contains("command"))
+        } else if (teamsMsg.contains("command")) {
             return gson.fromJson(teamsMsg, CommandMessage.class);
-        else
+        } else {
             throw new GeneralJwtException("Invalid parameters in JSON message");
+        }
     }
 }

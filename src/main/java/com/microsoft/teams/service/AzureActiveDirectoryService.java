@@ -1,7 +1,6 @@
 package com.microsoft.teams.service;
 
 import com.nimbusds.jwt.JWTParser;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
@@ -43,14 +42,13 @@ class AzureActiveDirectoryService {
         return areValidClaims(token, teamsId) && hasValidSignature(token).isValid();
     }
 
-    private TokenValidationResult validateIssuer(String token){
+    private TokenValidationResult validateIssuer(String token) {
         TokenValidationResult result = new TokenValidationResult();
         if (!issClaim.isEmpty()) {
             String currentIssuer = getClaimValueFromToken(token, "iss");
             boolean issuerIsValid = issClaim.equals(currentIssuer);
             result.setValid(issuerIsValid);
-            if (!issuerIsValid)
-            {
+            if (!issuerIsValid) {
                 result.setError("Expected issuer: " + issClaim + ", got: " + currentIssuer);
             }
         } else {
@@ -60,13 +58,12 @@ class AzureActiveDirectoryService {
         return result;
     }
 
-    private TokenValidationResult validateAudience(String token){
+    private TokenValidationResult validateAudience(String token) {
         TokenValidationResult result = new TokenValidationResult();
         String currentAudience = getClaimValueFromToken(token, "aud");
         boolean audienceIsValid = audClaim.equals(currentAudience);
         result.setValid(audienceIsValid);
-        if (!audienceIsValid)
-        {
+        if (!audienceIsValid) {
             result.setError("Expected audience: " + audClaim + ", got: " + currentAudience);
         }
         LOG.debug("validateAudience: " + result);
@@ -79,8 +76,7 @@ class AzureActiveDirectoryService {
             Date expirationTime = JWTParser.parse(token).getJWTClaimsSet().getExpirationTime();
             boolean isExpiredToken = expirationTime.before(new Date());
             result.setValid(!isExpiredToken);
-            if (isExpiredToken)
-            {
+            if (isExpiredToken) {
                 result.setError("Token expired on: " + expirationTime);
             }
         } catch (Exception e) {
@@ -90,13 +86,12 @@ class AzureActiveDirectoryService {
         return result;
     }
 
-    private TokenValidationResult validateOid(String token, String teamsId){
+    private TokenValidationResult validateOid(String token, String teamsId) {
         TokenValidationResult result = new TokenValidationResult();
         String currentOid = getClaimValueFromToken(token, "oid");
         boolean oidIsValid = teamsId.equals(currentOid);
         result.setValid(oidIsValid);
-        if (!oidIsValid)
-        {
+        if (!oidIsValid) {
             result.setError("Expected oid: " + teamsId + ", got: " + currentOid);
         }
         LOG.debug("validateOid: " + result);
@@ -140,8 +135,7 @@ class AzureActiveDirectoryService {
             boolean isValidSignature = jws.verifySignature();
             result.setValid(isValidSignature);
 
-            if (!isValidSignature)
-            {
+            if (!isValidSignature) {
                 result.setError("Signature verification failed.");
             }
         } catch (Exception e) {

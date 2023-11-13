@@ -82,7 +82,7 @@ public class ConfigPageServletTest {
         given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_ICONS)).willReturn("embed_icons");
         given(pluginImageSettings.getEmbedIconsSetting()).willReturn(false);
-        given(request.getCookies()).willReturn(new Cookie[]{ cookie});
+        given(request.getCookies()).willReturn(new Cookie[]{cookie});
 
         configPageServlet.doPost(request, response);
 
@@ -96,21 +96,21 @@ public class ConfigPageServletTest {
         given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_ICONS)).willReturn(null);
         given(pluginImageSettings.getEmbedIconsSetting()).willReturn(true);
-        given(request.getCookies()).willReturn(new Cookie[]{ cookie});
+        given(request.getCookies()).willReturn(new Cookie[]{cookie});
 
         configPageServlet.doPost(request, response);
 
         verify(pluginImageSettings).setEmbedIconsSetting(false);
     }
 
-  @Test
+    @Test
     public void doPostTestSetEmBedAvatarsToTrue() {
         Cookie cookie = new Cookie("plugin.xsrf.token", "plugin.xsrf.token");
 
         given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_AVATARS)).willReturn("embed_avatars");
         given(pluginImageSettings.getEmbedAvatarsSetting()).willReturn(false);
-        given(request.getCookies()).willReturn(new Cookie[]{ cookie});
+        given(request.getCookies()).willReturn(new Cookie[]{cookie});
 
         configPageServlet.doPost(request, response);
 
@@ -124,7 +124,7 @@ public class ConfigPageServletTest {
         given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_AVATARS)).willReturn(null);
         given(pluginImageSettings.getEmbedAvatarsSetting()).willReturn(true);
-        given(request.getCookies()).willReturn(new Cookie[]{ cookie});
+        given(request.getCookies()).willReturn(new Cookie[]{cookie});
 
         configPageServlet.doPost(request, response);
 
@@ -138,7 +138,7 @@ public class ConfigPageServletTest {
         given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_PROJECT_AVATARS)).willReturn("embed_project_avatars");
         given(pluginImageSettings.getEmbedProjectAvatarsSetting()).willReturn(false);
-        given(request.getCookies()).willReturn(new Cookie[]{ cookie});
+        given(request.getCookies()).willReturn(new Cookie[]{cookie});
 
         configPageServlet.doPost(request, response);
 
@@ -152,7 +152,7 @@ public class ConfigPageServletTest {
         given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_PROJECT_AVATARS)).willReturn(null);
         given(pluginImageSettings.getEmbedProjectAvatarsSetting()).willReturn(true);
-        given(request.getCookies()).willReturn(new Cookie[]{ cookie});
+        given(request.getCookies()).willReturn(new Cookie[]{cookie});
 
         configPageServlet.doPost(request, response);
 

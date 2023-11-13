@@ -1,7 +1,6 @@
 package com.microsoft.teams.utils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 
@@ -41,8 +40,8 @@ public class ImageEncoderImpl implements ImageEncoder {
                 LOG.debug("===>Encoding time longer than one second {}, for url {}", processTime, iconUrlString);
             }
             return String.format("data:%s;base64,%s", contentType, iconEncodedString);
-        } catch (IOException e) {
-            LOG.error(String.format("Could not encode image \"%s\"", iconUrlString));
+        } catch (Exception e) {
+            LOG.error(String.format("Could not process image to encode \"%s\"", iconUrlString), e);
             return iconUrlString;
         }
     }

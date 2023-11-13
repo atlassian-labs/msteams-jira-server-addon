@@ -17,20 +17,14 @@ public class AnnotatedDeserializer<T> implements JsonDeserializer {
         T pojo = new Gson().fromJson(je, type);
 
         Field[] fields = pojo.getClass().getDeclaredFields();
-        for (Field f : fields)
-        {
-            if (f.getAnnotation(JsonRequired.class) != null)
-            {
-                try
-                {
+        for (Field f : fields) {
+            if (f.getAnnotation(JsonRequired.class) != null) {
+                try {
                     f.setAccessible(true);
-                    if (f.get(pojo) == null)
-                    {
+                    if (f.get(pojo) == null) {
                         throw new JsonParseException("Missing field in JSON: " + f.getName());
                     }
-                }
-                catch (IllegalArgumentException | IllegalAccessException ex)
-                {
+                } catch (IllegalArgumentException | IllegalAccessException ex) {
                     LOG.warn(ex.getMessage());
                 }
             }

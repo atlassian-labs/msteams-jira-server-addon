@@ -1,0 +1,147 @@
+#  Pipeline for building and publishing msteams-jira-addon project
+image: atlassian/default-image:4
+
+options:
+  docker: true
+  size: 2x
+definitions:
+  services:
+    docker:
+      memory: 5000
+  steps:
+    - step: &dockerImage
+        name: Prepare custom Docker image
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - pipe: atlassian/artifactory-sidekick:v1
+          - source .artifactory/activate.sh
+          - export IMG_TAG=docker.atl-paas.net/atlassian/netrunners/ubuntu-pwsh-mvn
+          - docker build --tag="$IMG_TAG" --file docker/Dockerfile .
+          - docker push "$IMG_TAG"
+    - step: &buildAndPack
+        name: Build package
+        image:
+          name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn
+          username: netrunners
+          password: $PIPELINES_JWT_TOKEN
+        script:
+          - PACKAGE_VERSION=$(date +%Y.%m.%d)
+          - PACKAGE_ZIP_NAME=$PACKAGE_ZIP_NAME_PREFIX$PACKAGE_VERSION
+          # Remove internal servlets
+          - rm ./src/main/java/com/microsoft/teams/servlets/TeamsAtlasUserServlet.java;
+          - rm ./src/test/java/com/microsoft/teams/servlets/TeamsAtlasUserServletTest.java
+          - xmlstarlet edit -L -d "/atlassian-plugin/servlet[@key='test']" src/main/resources/atlassian-plugin.xml
+          # Replace ArtifactId Value
+          - xmlstarlet edit -L -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:artifactId" -v $PACKAGE_NAME pom.xml
+          - echo "`xmlstarlet sel -N s=http://maven.apache.org/POM/4.0.0 -t -v "/s:project/s:artifactId" pom.xml`"
+          # Replace Version Value
+          - xmlstarlet edit -L -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:version" -v $PACKAGE_VERSION pom.xml
+          - echo "`xmlstarlet sel -N s=http://maven.apache.org/POM/4.0.0 -t -v "/s:project/s:version" pom.xml`"
+          # Replace FinalName Value
+          - xmlstarlet edit -L -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:build/s:finalName" -v $PACKAGE_NAME-$PACKAGE_VERSION pom.xml
+          - echo "`xmlstarlet sel -N s=http://maven.apache.org/POM/4.0.0 -t -v "/s:project/s:build/s:finalName" pom.xml`"
+          # Replace ProjectName Value
+          - xmlstarlet edit -L -N s=http://maven.apache.org/POM/4.0.0 -u "/s:project/s:name" -v "$PROJECT_NAME" pom.xml
+          - echo "`xmlstarlet sel -N s=http://maven.apache.org/POM/4.0.0 -t -v "/s:project/s:name" pom.xml`"
+          # Run a powershell script
+          - pwsh ./setEnvironmentProperties.ps1 "src/main/resources/integration.properties" $APP_ID $PACKAGE_NAME "$APP_URL/JiraGateway?atlasId=%s&atlasUrl=%s&pluginVersion=%s" $PACKAGE_VERSION $APP_URL
+          - cat src/main/resources/integration.properties
+          # Build package
+          - atlas-mvn -B package --file pom.xml
+          # Zip package
+          - pushd target; zip ./../$PACKAGE_ZIP_NAME.zip $PACKAGE_NAME-$PACKAGE_VERSION.jar; popd
+        artifacts:
+          - RefAppAddon.*.zip
+    - step: &buildAndTest
+          name: Build & test
+          image:
+            name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn
+            username: netrunners
+            password: $PIPELINES_JWT_TOKEN
+          script:
+            # Build package and run tests
+            - atlas-mvn test
+    - step: &createTag
+        name: Create tag
+        script:
+          - TAG_NAME=$(date +%Y.%m.%d)
+          - echo "Creating new tag ${TAG_NAME}"
+          - git tag -am "Tag ${TAG_NAME}" $TAG_NAME
+          - git push origin $TAG_NAME
+    - step: &snyk-scan
+        name: Run Snyk scan
+        image:
+          name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn
+          username: netrunners
+          password: $PIPELINES_JWT_TOKEN
+        script:
+          - pipe: atlassian/artifactory-sidekick:v1
+          - source .artifactory/activate.sh
+          # Build package and skip tests
+          - atlas-mvn package -DskipTests
+          # Add mvn to PATH
+          - export MAVEN_HOME=$(echo "`atlas-version`" | grep -oP '(?<=ATLAS Maven Home:\ )(.)+$')/bin
+          - export PATH=${PATH}:${MAVEN_HOME}
+          # Install Snyk
+          - npm install -g snyk
+          # Run Snyk monitor and skip all provided dependencies
+          - snyk monitor . -- -Dscope=runtime
+    - step: &pushToGithub
+        name: Push changes to Github repo
+        script:
+          - git remote add github git@github.com:atlassian-labs/msteams-jira-server-addon.git
+          - git push -u github ${BITBUCKET_BRANCH}
+          - git push github --follow-tags
+pipelines:
+  default:
+    - step:
+          <<: *dockerImage
+          condition:
+            changesets:
+              includePaths:
+                - 'docker/**'
+    - step: *buildAndTest
+  custom:
+    buildDockerImage:
+      - step:
+          *dockerImage
+    createNewTag:
+      - step:
+          *createTag
+    runSnyk:
+      - step: *snyk-scan
+  branches:
+    master:
+      - step:
+          <<: *buildAndPack
+          name: Build integration package
+          deployment: Integration
+      - step:
+          <<: *buildAndPack
+          name: Build staging package
+          deployment: Staging
+      - step:
+          <<: *buildAndPack
+          name: Build production package
+          deployment: Production
+    release/*:
+      - step:
+          <<: *buildAndPack
+          name: Build integration package
+          deployment: Integration
+      - step:
+          <<: *buildAndPack
+          name: Build staging package
+          deployment: Staging
+      - step:
+          <<: *buildAndPack
+          name: Build production package
+          deployment: Production
+      - step:
+          <<: *createTag
+          trigger: manual
+      - step:
+          <<: *pushToGithub

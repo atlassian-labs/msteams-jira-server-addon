@@ -9,7 +9,6 @@ import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.microsoft.teams.config.PluginImageSettings;
 import com.microsoft.teams.config.PluginImageSettingsImpl;
 import com.microsoft.teams.service.AppSettingsService;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

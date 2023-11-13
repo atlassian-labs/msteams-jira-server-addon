@@ -78,23 +78,25 @@ public class PluginLifeCycleEventListener implements InitializingBean, Disposabl
         Assert.notNull(nextPluginStatus, "EventType should not be null");
         LOG.info("Changing plugin status: {} -> {}", currentPluginStatus, nextPluginStatus);
 
-        if (nextPluginStatus == INSTALLED)
+        if (nextPluginStatus == INSTALLED) {
             setPluginStatus(INSTALLED);
-        else if (nextPluginStatus == UNINSTALLED)
+        } else if (nextPluginStatus == UNINSTALLED) {
             setPluginStatus(UNINSTALLED);
-        else
+        } else {
             throw new IllegalArgumentException("Unsupported pluginStatus");
+        }
     }
 
     private void setPluginStatus(EventType nextPluginStatus) {
         LOG.info("Changing plugin status: {} -> {}", currentPluginStatus, nextPluginStatus);
         currentPluginStatus = nextPluginStatus;
-        if (currentPluginStatus == INSTALLED)
+        if (currentPluginStatus == INSTALLED) {
             pluginLifeCycleEventHandler.onInstalled();
-        else if (currentPluginStatus == UNINSTALLED)
+        } else if (currentPluginStatus == UNINSTALLED) {
             pluginLifeCycleEventHandler.onUninstalled();
-        else
+        } else {
             throw new IllegalArgumentException("Unsupported pluginStatus");
+        }
     }
 
     private void register() {

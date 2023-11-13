@@ -172,7 +172,7 @@ public class SearchProjectsMessageHandler implements ProcessMessageStrategy {
         String[] version2Splits = version2.split("\\.");
         int maxLengthOfVersionSplits = Math.max(version1Splits.length, version2Splits.length);
 
-        for (int i = 0; i < maxLengthOfVersionSplits; i++){
+        for (int i = 0; i < maxLengthOfVersionSplits; i++) {
             Integer v1 = i < version1Splits.length ? Integer.parseInt(version1Splits[i]) : 0;
             Integer v2 = i < version2Splits.length ? Integer.parseInt(version2Splits[i]) : 0;
             int compare = v1.compareTo(v2);

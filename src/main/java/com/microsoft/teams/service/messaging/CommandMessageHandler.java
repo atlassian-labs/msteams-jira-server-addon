@@ -101,8 +101,9 @@ public class CommandMessageHandler implements ProcessMessageStrategy {
 
     private String getDashboardUrlForProduct() {
         String url = "";
-        if (JIRA_PRODUCT_NAME.equals(hostProperties.getDisplayName()))
+        if (JIRA_PRODUCT_NAME.equals(hostProperties.getDisplayName())) {
             url = String.format(JIRA_DASHBOARD_URL, hostProperties.getFullBaseUrl());
+        }
         return url;
     }
 

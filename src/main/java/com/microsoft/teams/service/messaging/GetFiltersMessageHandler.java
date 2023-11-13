@@ -134,7 +134,7 @@ public class GetFiltersMessageHandler implements ProcessMessageStrategy {
         }
 
         String escapedFilterName = filterName
-                .replace("\\","\\\\")
+                .replace("\\", "\\\\")
                 .replace("\"", "\\\"");
 
 

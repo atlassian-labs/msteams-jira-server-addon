@@ -6,7 +6,6 @@ import com.atlassian.jira.event.issue.IssueEvent;
 import com.atlassian.jira.event.type.EventType;
 import com.atlassian.plugin.spring.scanner.annotation.imports.JiraImport;
 import com.google.common.collect.ImmutableList;
-import com.microsoft.teams.listener.queue.IssueEventConsumer;
 import com.microsoft.teams.service.AppKeysService;
 import com.microsoft.teams.service.AppPropertiesService;
 import com.microsoft.teams.service.TeamsAtlasUserService;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.List;
 import java.util.Queue;

@@ -65,8 +65,8 @@ public class TeamsAtlasUserServlet extends HttpServlet {
                     w.write("<tr>");
                     w.printf("<td> %s </td>", user.getMsTeamsUserId());
                     w.printf("<td> %s </td>", user.getAtlasAccessToken());
-                    w.printf("<td> %s </td>", user.getDateCreated() != null ? dateFormat.format(user.getDateCreated()) : "" );
-                    w.printf("<td> %s </td>", user.getDateUpdated() != null ? dateFormat.format(user.getDateUpdated()) : "" );
+                    w.printf("<td> %s </td>", user.getDateCreated() != null ? dateFormat.format(user.getDateCreated()) : "");
+                    w.printf("<td> %s </td>", user.getDateUpdated() != null ? dateFormat.format(user.getDateUpdated()) : "");
                     w.write("<td>");
                     w.write("<form method=\"post\">");
                     w.write("<input type=\"hidden\" name=\"method\" value=\"delete\"/>");

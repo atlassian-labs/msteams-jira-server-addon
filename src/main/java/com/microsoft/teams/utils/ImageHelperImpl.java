@@ -37,7 +37,7 @@ public class ImageHelperImpl implements ImageHelper {
     public String replaceImagesInJson(String jsonString, String baseUrl, HttpRequestFactory factory) {
          long start = System.currentTimeMillis();
 
-        if(pluginImageSettings.hasChanged()) {
+        if (pluginImageSettings.hasChanged()) {
             iconUrlBase64Map = new HashMap<>();
 
             pluginImageSettings.resetObservableState();

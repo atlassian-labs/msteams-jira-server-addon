@@ -113,7 +113,7 @@ public class RequestService {
                 response.disconnect();
             }
         } catch (HttpResponseException e) {
-            if (e.getStatusCode() == 401){
+            if (e.getStatusCode() == 401) {
                 code = 401;
                 msg = CONSENT_WAS_REVOKED;
             } else {
@@ -151,7 +151,7 @@ public class RequestService {
                     .execute();
             atlasResponse = response.parseAsString();
         } catch (HttpResponseException e) {
-            if (e.getStatusCode() == 401){
+            if (e.getStatusCode() == 401) {
                 code = 401;
                 msg = CONSENT_WAS_REVOKED;
             } else {
@@ -169,8 +169,9 @@ public class RequestService {
             }
         } finally {
             try {
-                if (response != null)
+                if (response != null) {
                     response.disconnect();
+                }
             } catch (IOException e) {
                 LOG.debug(e.getMessage());
             }
@@ -209,8 +210,9 @@ public class RequestService {
             msg = e.getMessage();
         } finally {
             try {
-                if (response != null)
+                if (response != null) {
                     response.disconnect();
+                }
             } catch (IOException e) {
                 LOG.debug(e.getMessage());
             }

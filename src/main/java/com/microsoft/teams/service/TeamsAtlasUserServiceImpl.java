@@ -94,7 +94,8 @@ public class TeamsAtlasUserServiceImpl implements TeamsAtlasUserService {
     @Override
     public void deleteAll() {
             TeamsAtlasUser[] users = activeObjects.find(TeamsAtlasUser.class);
-            if (users != null)
+            if (users != null) {
                 activeObjects.delete(users);
+            }
     }
 }

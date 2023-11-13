@@ -2,7 +2,6 @@ package com.microsoft.teams.service.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.google.common.collect.ImmutableMap;
 
 import java.util.*;
 import java.net.URI;

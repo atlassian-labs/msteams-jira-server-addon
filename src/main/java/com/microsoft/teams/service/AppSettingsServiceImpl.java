@@ -32,12 +32,15 @@ public class AppSettingsServiceImpl implements AppSettingsService{
         try {
             AppSettings[] settingsKeySet = activeObjects.find(AppSettings.class);
             AppSettings appSettings = (settingsKeySet.length == 0) ? activeObjects.create(AppSettings.class) : settingsKeySet[0];
-            if (keys.containsKey(SETTINGS_EMBED_ICONS))
+            if (keys.containsKey(SETTINGS_EMBED_ICONS)) {
                 appSettings.setEmbedIcons(Boolean.parseBoolean(keys.get(SETTINGS_EMBED_ICONS)));
-            if (keys.containsKey(SETTINGS_EMBED_AVATARS))
+            }
+            if (keys.containsKey(SETTINGS_EMBED_AVATARS)) {
                 appSettings.setEmbedAvatars(Boolean.parseBoolean(keys.get(SETTINGS_EMBED_AVATARS)));
-            if (keys.containsKey(SETTINGS_EMBED_PROJECT_AVATARS))
+            }
+            if (keys.containsKey(SETTINGS_EMBED_PROJECT_AVATARS)) {
                 appSettings.setEmbedProjectAvatars(Boolean.parseBoolean(keys.get(SETTINGS_EMBED_PROJECT_AVATARS)));
+            }
             LOG.debug("Saving keys to AO transaction started. Settings: Embed icons - {}, Embed avatars  - {}, Embed project avatars - {}", appSettings.getEmbedIcons(), appSettings.getEmbedAvatars(), appSettings.getEmbedProjectAvatars());
             appSettings.save();
             LOG.debug("Saving app settings to AO transaction performed");
@@ -57,7 +60,7 @@ public class AppSettingsServiceImpl implements AppSettingsService{
                 keys.put(SETTINGS_EMBED_AVATARS, Boolean.toString(appSettings[0].getEmbedAvatars()));
                 keys.put(SETTINGS_EMBED_PROJECT_AVATARS, Boolean.toString(appSettings[0].getEmbedProjectAvatars()));
             }
-        }catch (Exception exception) {
+        } catch (Exception exception) {
             LOG.error(exception.getMessage(), exception);
         }
 

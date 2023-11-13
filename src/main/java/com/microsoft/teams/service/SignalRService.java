@@ -131,8 +131,7 @@ public class SignalRService implements DisposableBean {
         dispose();
     }
 
-    protected void dispose()
-    {
+    protected void dispose() {
         if (disposed) {
             return;
         }
@@ -151,7 +150,7 @@ public class SignalRService implements DisposableBean {
         Matcher matcher = logPattern.matcher(response);
         String responseWithoutImage = response;
         while (matcher.find()) {
-            responseWithoutImage = responseWithoutImage.replace(matcher.group(1),"(DELETED)");
+            responseWithoutImage = responseWithoutImage.replace(matcher.group(1), "(DELETED)");
         }
         return responseWithoutImage;
     }

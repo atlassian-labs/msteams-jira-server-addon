@@ -5,12 +5,11 @@ import com.google.gson.annotations.SerializedName;
 import com.microsoft.teams.anotations.JsonRequired;
 
 public class AuthParamMessage implements TeamsMessage {
-	
-	@SerializedName("teamsId")
+    @SerializedName("teamsId")
     @Expose
     @JsonRequired
     private String teamsId;
- 
+
     @SerializedName("token")
     @Expose
     @JsonRequired
@@ -19,12 +18,16 @@ public class AuthParamMessage implements TeamsMessage {
     @SerializedName("verificationCode")
     @Expose
     public String verificationCode;
-    
+
     @SerializedName("requestToken")
     @Expose
     public String requestToken;
-    
-	public String getTeamsId() { return teamsId; }
-	
-	public String getToken() { return token; }
+
+    public String getTeamsId() {
+        return teamsId;
+    }
+
+    public String getToken() {
+        return token;
+    }
 }
