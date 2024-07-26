@@ -29,6 +29,9 @@ definitions:
           password: $PIPELINES_JWT_TOKEN
         script:
           - PACKAGE_VERSION=$(date +%Y.%m.%d)
+          - if [[ $BITBUCKET_BRANCH == *"release"* ]]; then
+              PACKAGE_VERSION=$(echo "$BITBUCKET_BRANCH" | sed 's/release\///')
+            fi
           - PACKAGE_ZIP_NAME=$PACKAGE_ZIP_NAME_PREFIX$PACKAGE_VERSION
           # Remove internal servlets
           - rm ./src/main/java/com/microsoft/teams/servlets/TeamsAtlasUserServlet.java;
