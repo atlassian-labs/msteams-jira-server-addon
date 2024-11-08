@@ -18,6 +18,9 @@ RUN apt-get install -y powershell
 # 8. Start PowerShell
 RUN pwsh
 
+# Install jq command for processing JSON files
+RUN apt-get -y install jq
+
 # Install xmlstarlet command to edit XML files
 RUN apt-get -y install xmlstarlet
 

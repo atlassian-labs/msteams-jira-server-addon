@@ -64,7 +64,7 @@ jobs:
         run: mvn -B package --file pom.xml
 
       - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v2.2.3
+        uses: actions/upload-artifact@v4
         with:
           name: RefAppAddon.Production.${{ steps.date.outputs.date }}${{ github.run_number }}
           path: ${{ github.workspace }}/target/*.jar

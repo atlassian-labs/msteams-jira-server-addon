@@ -28,7 +28,11 @@ definitions:
           username: netrunners
           password: $PIPELINES_JWT_TOKEN
         script:
-          - PACKAGE_VERSION=$(date +%Y.%m.%d)
+          - |
+            PACKAGE_VERSION=$(date +%Y.%m.%d)
+            if [[ $BITBUCKET_BRANCH == *"release"* ]]; then
+              PACKAGE_VERSION=$(echo "$BITBUCKET_BRANCH" | sed 's/release\///')
+            fi
           - PACKAGE_ZIP_NAME=$PACKAGE_ZIP_NAME_PREFIX$PACKAGE_VERSION
           # Remove internal servlets
           - rm ./src/main/java/com/microsoft/teams/servlets/TeamsAtlasUserServlet.java;
@@ -56,18 +60,18 @@ definitions:
         artifacts:
           - RefAppAddon.*.zip
     - step: &buildAndTest
-          name: Build & test
-          image:
-            name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn
-            username: netrunners
-            password: $PIPELINES_JWT_TOKEN
-          script:
-            # Build package and run tests
-            - atlas-mvn test
+        name: Build & test
+        image:
+          name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn
+          username: netrunners
+          password: $PIPELINES_JWT_TOKEN
+        script:
+          # Build package and run tests
+          - atlas-mvn test
     - step: &createTag
         name: Create tag
         script:
-          - TAG_NAME=$(date +%Y.%m.%d)
+          - TAG_NAME=$(echo "$BITBUCKET_BRANCH" | sed 's/release\///')
           - echo "Creating new tag ${TAG_NAME}"
           - git tag -am "Tag ${TAG_NAME}" $TAG_NAME
           - git push origin $TAG_NAME
@@ -95,6 +99,93 @@ definitions:
           - git remote add github git@github.com:atlassian-labs/msteams-jira-server-addon.git
           - git push -u github ${BITBUCKET_BRANCH}
           - git push github --follow-tags
+    - step: &staticAnalysis
+        name: SonarQube analysis
+        image:
+          name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn
+          username: netrunners
+          password: $PIPELINES_JWT_TOKEN
+        script:
+          - atlas-mvn verify sonar:sonar -Dsonar.projectKey=msteams-jira-onprem-addon -Pcoverage
+          - |
+            ENCODED_BRANCH=$(echo "$BITBUCKET_BRANCH" | jq -sRr @uri)
+            STATUS=$(curl -s -u $SONAR_TOKEN: "https://sonar-enterprise.internal.atlassian.com/api/qualitygates/project_status?projectKey=msteams-jira-onprem-addon&branch=$ENCODED_BRANCH" | jq -r .projectStatus.status)
+            if [ "$STATUS" != "OK" ]; then
+               echo "Quality gate failed: https://sonar-enterprise.internal.atlassian.com/dashboard?id=msteams-jira-onprem-addon&branch=$ENCODED_BRANCH"
+               exit 1
+            fi
+    - step: &uploadToMarketplace
+        name: Upload new version to Marketplace
+        image:
+          name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn
+          username: netrunners
+          password: $PIPELINES_JWT_TOKEN
+        script:
+          - VERSION=$(echo "$BITBUCKET_BRANCH" | sed 's/release\///')
+          - artifactZipFileName="RefAppAddon.Production.$VERSION.zip"
+          - mkdir artifacts
+          - unzip -q "$artifactZipFileName" -d ./artifacts
+          - artifactFileName="./artifacts/$(ls ./artifacts)"
+          - echo $artifactFileName
+          - credentials="${MPAC_BOT_LOGIN}:${MPAC_BOT_TOKEN}"
+          # Upload artifact to Marketplace
+          - |
+            response=$(curl --request POST \
+             --url https://marketplace.atlassian.com/rest/2/assets/artifact \
+             --user "$credentials" \
+             --header 'Accept: application/json' \
+             --header 'Content-Type: multipart/form-data' \
+             --form file=@"$artifactFileName")
+          - echo $response
+          - artifact_url=$(echo "$response" | jq -r '._links.binary.href')
+          - |
+            # Check if the extraction was successful
+            if [ -n "$artifact_url" ]; then
+                echo "Artifact URL: $artifact_url"
+            else
+                echo "Failed to extract Artifact URL from the response."
+                exit 1
+            fi
+          - sleep 60
+          - buildName=$(echo "$BITBUCKET_BRANCH" | sed 's/release\///')
+          - buildNumber=$(echo "$VERSION" | tr -d '.')00
+          - |
+            curl --request POST \
+                 --url 'https://marketplace.atlassian.com/rest/2/addons/microsoft-teams/versions' \
+                 --user ${credentials} \
+                 --header 'Content-Type: application/json' \
+                 --data '{
+                   "_links": {
+                     "self": {
+                       "href": "/rest/2/addons/microsoft-teams/versions/build/'${buildNumber}'"
+                     },
+                   "artifact": {
+                       "href": "'${artifact_url}'"
+                   }},
+                   "buildNumber": '${buildNumber}',
+                   "name": "'${buildName}'",
+                   "status": "private",
+                   "compatibilities": [
+                     {
+                       "application": "jira",
+                       "hosting": {
+                         "dataCenter": {
+                           "min": {
+                               "build": 900003
+                           },
+                           "max": {
+                               "build": 9170000
+                           }}
+                       }
+                     }
+                   ],
+                   "vendorLinks": {
+                     "documentation": "https://www.msteams-atlassian.com/JiraServer/",
+                     "license": "https://www.atlassian.com/licensing/marketplace/termsofuse",
+                     "eula": "https://www.atlassian.com/licensing/marketplace/termsofuse",
+                     "learnMore": "https://www.msteams-atlassian.com/JiraServer/"
+                   }
+                 }'
 pipelines:
   default:
     - step:
@@ -104,6 +195,7 @@ pipelines:
               includePaths:
                 - 'docker/**'
     - step: *buildAndTest
+    - step: *staticAnalysis
   custom:
     buildDockerImage:
       - step:
@@ -113,6 +205,8 @@ pipelines:
           *createTag
     runSnyk:
       - step: *snyk-scan
+    runSonar:
+      - step: *staticAnalysis
   branches:
     master:
       - step:
@@ -127,6 +221,7 @@ pipelines:
           <<: *buildAndPack
           name: Build production package
           deployment: Production
+      - step: *staticAnalysis
     release/*:
       - step:
           <<: *buildAndPack
@@ -140,6 +235,10 @@ pipelines:
           <<: *buildAndPack
           name: Build production package
           deployment: Production
+      - step:
+          <<: *uploadToMarketplace
+          name: Upload packages to Atlassian Marketplace
+          trigger: manual
       - step:
           <<: *createTag
           trigger: manual

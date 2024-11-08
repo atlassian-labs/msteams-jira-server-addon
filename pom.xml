@@ -14,8 +14,8 @@
         <url>https://www.atlassian.com/</url>
     </organization>
 
-    <name>Microsoft Teams for Jira Server</name>
-    <description>The ultimate Microsoft Teams integration for Jira Server. Microsoft Teams Integration is required to use Jira Server app for Microsoft Teams.</description>
+    <name>Microsoft Teams for Jira Data Center</name>
+    <description>The ultimate Microsoft Teams integration for Jira Data Center. Microsoft Teams Integration is required to use Jira Data Center app for Microsoft Teams.</description>
     <packaging>atlassian-plugin</packaging>
 
     <pluginRepositories>
@@ -126,7 +126,7 @@
         <dependency>
             <groupId>org.bitbucket.b_c</groupId>
             <artifactId>jose4j</artifactId>
-            <version>0.9.3</version>
+            <version>0.9.4</version>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-api</artifactId>
@@ -433,6 +433,35 @@
                         </dependency>
                     </scannedDependencies>
                     <verbose>false</verbose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.11</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <formats>
+                                <format>XML</format>
+                            </formats>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>META-INF/**</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
