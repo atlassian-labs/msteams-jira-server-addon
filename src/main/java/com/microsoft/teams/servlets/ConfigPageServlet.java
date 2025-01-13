@@ -94,7 +94,7 @@ public class ConfigPageServlet extends HttpServlet {
 
         LOG.debug("Received tokens and data in doPost. Request = {}, pluginToken = {}, atlToken = {}", request, pluginToken, atl_token.get());
 
-        if (pluginToken == null && !atl_token.isPresent() && !pluginToken.equals(atl_token.get())) {
+        if (pluginToken == null || !atl_token.isPresent() || !pluginToken.equals(atl_token.get())) {
             return;
         }
 
