@@ -3,8 +3,6 @@ package com.microsoft.teams.service;
 import com.google.api.client.auth.oauth.OAuthParameters;
 import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.http.json.JsonHttpContent;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.microsoft.teams.oauth.AtlasOAuthClient;
@@ -42,7 +40,10 @@ public class RequestService {
     private final ImageHelper imageHelper;
     private final KeysService keysService;
     private final HostPropertiesService hostProperties;
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private final Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .serializeNulls()
+            .create();
 
     @Autowired
     public RequestService(PropertiesClient propertiesClient,
@@ -145,7 +146,9 @@ public class RequestService {
             } else {
                 jsonObject = gson.fromJson(requestMessage.getRequestBody(), Object.class);
             }
-            HttpContent content = new JsonHttpContent(new JacksonFactory(), jsonObject);
+            String jsonPayload = gson.toJson(jsonObject);
+            // use ByteArrayContent with properly generated Json and escaped characters
+            HttpContent content = new ByteArrayContent("application/json", jsonPayload.getBytes());
             response = requestFactory.buildPostRequest(new GenericUrl(
                     String.format(REQUEST_URL_PATTERN, hostProperties.getFullBaseUrl(), requestMessage.getRequestUrl())), content)
                     .execute();
@@ -196,7 +199,9 @@ public class RequestService {
             } else {
                 jsonObject = gson.fromJson(requestMessage.getRequestBody(), Object.class);
             }
-            HttpContent content = new JsonHttpContent(new JacksonFactory(), jsonObject);
+            String jsonPayload = gson.toJson(jsonObject);
+            // use ByteArrayContent with properly generated Json and escaped characters
+            HttpContent content = new ByteArrayContent("application/json", jsonPayload.getBytes());
             response = requestFactory.buildPutRequest(new GenericUrl(
                     String.format(REQUEST_URL_PATTERN, hostProperties.getFullBaseUrl(), requestMessage.getRequestUrl())), content)
                     .execute();
