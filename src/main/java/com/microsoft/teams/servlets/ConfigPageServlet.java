@@ -7,6 +7,7 @@ import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.templaterenderer.RenderingException;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.microsoft.teams.config.PluginImageSettings;
+import com.microsoft.teams.oauth.PropertiesClient;
 import com.microsoft.teams.service.AppPropertiesService;
 import com.microsoft.teams.service.HostPropertiesService;
 import com.microsoft.teams.service.KeysService;
@@ -124,7 +125,7 @@ public class ConfigPageServlet extends HttpServlet {
         Map<String, Object> teamsContext = new HashMap<>();
         teamsContext.put("publicKey", keysService.getPublicKey());
         teamsContext.put("consumerKey", keysService.getConsumerKey());
-        teamsContext.put("consumerName", "MicrosoftTeamsIntegration");
+        teamsContext.put("consumerName", PropertiesClient.MICROSOFT_TEAMS_INTEGRATION);
         teamsContext.put("atlasHome", hostProperties.getFullBaseUrl());
         teamsContext.put("atlasId", keysService.getAtlasId());
         teamsContext.put("pluginKey", appProperties.getPluginKey());

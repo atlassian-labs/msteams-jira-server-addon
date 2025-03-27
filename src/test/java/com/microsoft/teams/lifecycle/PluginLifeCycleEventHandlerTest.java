@@ -32,10 +32,12 @@ public class PluginLifeCycleEventHandlerTest {
     HostPropertiesService hostProperties;
     @Mock
     AoService aoService;
+    @Mock
+    ApplicationLinkCreatorService applicationLinkCreatorService;
 
     @Before
     public void setUp() {
-        pluginLifeCycleEventHandler = new PluginLifeCycleEventHandler(propertiesClient, applicationProperties, signalRService, monitorJob, keysService, hostProperties, aoService);
+        pluginLifeCycleEventHandler = new PluginLifeCycleEventHandler(propertiesClient, applicationProperties, signalRService, monitorJob, keysService, hostProperties, aoService, applicationLinkCreatorService);
     }
 
     @Test
@@ -49,5 +51,6 @@ public class PluginLifeCycleEventHandlerTest {
         verify(monitorJob, times(1)).registerScheduler();
         verify(monitorJob, times(1)).registerScheduler();
         verify(aoService, times(1)).updateDbToAoObjects();
+        verify(applicationLinkCreatorService, times(1)).createApplicationLink(anyMap());
     }
 }

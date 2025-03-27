@@ -5,6 +5,7 @@ import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.event.events.PluginUninstalledEvent;
+import com.atlassian.plugin.event.events.PluginUninstallingEvent;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.microsoft.teams.lifecycle.events.EventType;
 import com.microsoft.teams.service.AppPropertiesService;
@@ -67,7 +68,7 @@ public class PluginLifeCycleEventListener implements InitializingBean, Disposabl
     }
 
     @PluginEventListener
-    public void onPluginUninstalledEvent(PluginUninstalledEvent event) {
+    public void onPluginUninstallingEvent(PluginUninstallingEvent event) {
         if (appPluginKey.equals(event.getPlugin().getKey())) {
             LOG.info("Handling PluginUninstalledEvent");
             handle(UNINSTALLED, event.getPlugin());

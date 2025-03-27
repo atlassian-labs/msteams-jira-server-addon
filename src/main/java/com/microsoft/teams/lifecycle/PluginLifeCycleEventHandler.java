@@ -25,6 +25,7 @@ public class PluginLifeCycleEventHandler {
     private final KeysService keysService;
     private final HostPropertiesService hostProperties;
     private final AoService aoService;
+    private final ApplicationLinkCreatorService applicationLinkCreatorService;
 
     @Autowired
     public PluginLifeCycleEventHandler(PropertiesClient propertiesClient,
@@ -33,7 +34,8 @@ public class PluginLifeCycleEventHandler {
                                        SignalRConnectionMonitorJob monitorJob,
                                        KeysService keysService,
                                        HostPropertiesService hostProperties,
-                                       AoService aoService) {
+                                       AoService aoService,
+                                       ApplicationLinkCreatorService applicationLinkCreatorService) {
         this.propertiesClient = propertiesClient;
         this.applicationProperties = applicationProperties;
         this.signalRService = signalRService;
@@ -41,6 +43,7 @@ public class PluginLifeCycleEventHandler {
         this.keysService = keysService;
         this.hostProperties = hostProperties;
         this.aoService = aoService;
+        this.applicationLinkCreatorService = applicationLinkCreatorService;
     }
 
     void onInstalled() {
@@ -67,8 +70,11 @@ public class PluginLifeCycleEventHandler {
         monitorJob.registerScheduler();
 
         aoService.updateDbToAoObjects();
+
+        applicationLinkCreatorService.createApplicationLink(properties);
     }
 
     void onUninstalled() {
+        applicationLinkCreatorService.removeApplicationLink();
     }
 }

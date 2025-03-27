@@ -32,6 +32,7 @@ public class PropertiesClient {
     public static final String SETTINGS_EMBED_ICONS = "settings_embed_icons";
     public static final String SETTINGS_EMBED_AVATARS = "settings_embed_avatars";
     public static final String SETTINGS_EMBED_PROJECT_AVATARS = "settings_embed_project_avatars";
+    public static final String MICROSOFT_TEAMS_INTEGRATION = "MicrosoftTeamsIntegration";
 
     private static final Map<String, String> DEFAULT_PROPERTY_VALUES = ImmutableMap.<String, String>builder()
             .put(CONSUMER_KEY, CONSUMER_KEY_VALUE)
