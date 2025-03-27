@@ -45,6 +45,10 @@
         <url-pattern>/user/mapping</url-pattern>
     </servlet>
 
+    <servlet key="atlasId-servlet" class="com.microsoft.teams.servlets.JiraServerIdServlet" name="jiraServerIdServlet">
+        <url-pattern>/xproduct/getJiraServerId</url-pattern>
+    </servlet>
+
     <rest name="plugin Rest Api" key="rest-api-resource" path="/teams" version="1.0">
         <description key="rest-api-description">The My Rest Resource Plugin</description>
     </rest>
