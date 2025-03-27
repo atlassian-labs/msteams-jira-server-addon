@@ -4,7 +4,6 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
-import com.atlassian.plugin.event.events.PluginUninstalledEvent;
 import com.atlassian.plugin.event.events.PluginUninstallingEvent;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.microsoft.teams.lifecycle.events.EventType;

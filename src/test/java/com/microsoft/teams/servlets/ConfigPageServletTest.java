@@ -4,10 +4,7 @@ import com.atlassian.jira.mock.component.MockComponentWorker;
 import com.atlassian.jira.security.xsrf.XsrfTokenGenerator;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.microsoft.teams.config.PluginImageSettings;
-import com.microsoft.teams.service.AppPropertiesService;
-import com.microsoft.teams.service.HostPropertiesService;
-import com.microsoft.teams.service.KeysService;
-import com.microsoft.teams.service.SignalRService;
+import com.microsoft.teams.service.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,6 +45,8 @@ public class ConfigPageServletTest {
     HttpServletResponse response;
     @Mock
     XsrfTokenGenerator xsrfTokenGenerator;
+    @Mock
+    ApplicationLinkCreatorService applicationLinkCreatorService;
     ConfigPageServlet configPageServlet;
 
     private static final String EMBED_ICONS = "embed-icons";
@@ -61,7 +60,7 @@ public class ConfigPageServletTest {
         MockitoAnnotations.initMocks(this);
         MockComponentWorker mockComponentWorker = new MockComponentWorker();
         mockComponentWorker.addMock(TemplateRenderer.class, renderer).addMock(XsrfTokenGenerator.class, xsrfTokenGenerator).init();
-        configPageServlet = new ConfigPageServlet(renderer, redirectHelper, signalRService, appProperties, keysService, hostProperties, pluginImageSettings);
+        configPageServlet = new ConfigPageServlet(renderer, redirectHelper, signalRService, appProperties, keysService, hostProperties, pluginImageSettings, applicationLinkCreatorService);
     }
 
     @Test

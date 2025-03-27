@@ -9,7 +9,7 @@
         <param name="atlassian-data-center-compatible">true</param>
         <param name="plugin-type">both</param>
 
-        <param name="configure.url">/plugins/servlet/xproduct/admin</param>
+        <param name="configure.url">/plugins/servlet/teams/admin</param>
     </plugin-info>
 
     <!-- create our i18n resource -->
@@ -18,7 +18,9 @@
     <!-- create our web resources -->
     <web-resource key="integration-resources" name="integration Web Resources">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
-        
+        <dependency>com.atlassian.auiplugin:dialog2</dependency>
+        <dependency>com.atlassian.auiplugin:aui-toggle</dependency>
+
         <resource type="download" name="integration.css" location="/css/integration.css"/>
         <resource type="download" name="integration.js" location="/js/integration.js"/>
         <resource type="download" name="images/" location="/images"/>
@@ -34,23 +36,23 @@
     </ao>
 
     <servlet key="admin-servlet" class="com.microsoft.teams.servlets.ConfigPageServlet" name="adminPageServlet">
-        <url-pattern>/xproduct/admin</url-pattern>
+        <url-pattern>/teams/admin</url-pattern>
     </servlet>
 
     <servlet key="reconnect-servlet" class="com.microsoft.teams.servlets.ReconnectServlet" name="reconnectServlet">
-        <url-pattern>/signalr/reconnect</url-pattern>
+        <url-pattern>/teams/signalr/reconnect</url-pattern>
     </servlet>
 
-    <servlet key="test" class="com.microsoft.teams.servlets.TeamsAtlasUserServlet" name="mappingServlet">
-        <url-pattern>/user/mapping</url-pattern>
+    <servlet key="create-applink-servlet" class="com.microsoft.teams.servlets.CreateAppLinkServlet" name="createAppLinkServlet">
+        <url-pattern>/teams/applink/create</url-pattern>
     </servlet>
 
     <servlet key="atlasId-servlet" class="com.microsoft.teams.servlets.JiraServerIdServlet" name="jiraServerIdServlet">
-        <url-pattern>/xproduct/getJiraServerId</url-pattern>
+        <url-pattern>/teams/getJiraServerId</url-pattern>
     </servlet>
 
-    <rest name="plugin Rest Api" key="rest-api-resource" path="/teams" version="1.0">
-        <description key="rest-api-description">The My Rest Resource Plugin</description>
-    </rest>
+    <servlet key="test" class="com.microsoft.teams.servlets.TeamsAtlasUserServlet" name="mappingServlet">
+        <url-pattern>/teams/user/mapping</url-pattern>
+    </servlet>
 
 </atlassian-plugin>

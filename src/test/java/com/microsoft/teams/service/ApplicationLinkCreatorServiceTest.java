@@ -22,7 +22,7 @@ import java.util.Map;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class ApplicationLinkCreatorServiceTest {
+class ApplicationLinkCreatorServiceTest {
 
     @Mock
     private MutatingApplicationLinkService mutatingApplicationLinkService;
@@ -47,7 +47,7 @@ public class ApplicationLinkCreatorServiceTest {
 
 
     @Test
-    public void testCreateApplicationLink() throws Exception {
+    void testCreateApplicationLink() throws Exception {
         String baseUrl = "http://example.com";
         when(appProperties.getTeamsAppBaseUrl()).thenReturn(baseUrl);
         when(mutatingApplicationLinkService.getApplicationLinks()).thenReturn(Collections.emptyList());
@@ -65,7 +65,7 @@ public class ApplicationLinkCreatorServiceTest {
     }
 
     @Test
-    public void testRemoveApplicationLink() throws Exception {
+    void testRemoveApplicationLink() throws Exception {
         String baseUrl = "http://example.com";
         when(appProperties.getTeamsAppBaseUrl()).thenReturn(baseUrl);
 
@@ -82,7 +82,7 @@ public class ApplicationLinkCreatorServiceTest {
     }
 
     @Test
-    public void testCreateApplicationLinkAlreadyExists() throws Exception {
+    void testCreateApplicationLinkAlreadyExists() throws Exception {
         String baseUrl = "http://example.com";
         when(appProperties.getTeamsAppBaseUrl()).thenReturn(baseUrl);
         when(mutatingApplicationLinkService.getApplicationLinks()).thenReturn(Collections.singletonList(applicationLink));
@@ -95,7 +95,7 @@ public class ApplicationLinkCreatorServiceTest {
     }
 
     @Test
-    public void testCreateApplicationLinkException() throws Exception {
+    void testCreateApplicationLinkException() throws Exception {
         when(appProperties.getTeamsAppBaseUrl()).thenThrow(new RuntimeException("Test Exception"));
 
         applicationLinkCreatorService.createApplicationLink(new HashMap<>());
@@ -105,7 +105,7 @@ public class ApplicationLinkCreatorServiceTest {
     }
 
     @Test
-    public void testRemoveApplicationLinkNotExists() throws Exception {
+    void testRemoveApplicationLinkNotExists() throws Exception {
         String baseUrl = "http://example.com";
         when(appProperties.getTeamsAppBaseUrl()).thenReturn(baseUrl);
         when(mutatingApplicationLinkService.getApplicationLinks()).thenReturn(Collections.emptyList());
@@ -118,7 +118,7 @@ public class ApplicationLinkCreatorServiceTest {
     }
 
     @Test
-    public void testRemoveApplicationLinkNoConsumerKey() throws Exception {
+    void testRemoveApplicationLinkNoConsumerKey() throws Exception {
         String baseUrl = "http://example.com";
         when(appProperties.getTeamsAppBaseUrl()).thenReturn(baseUrl);
 

@@ -8,10 +8,7 @@ import com.atlassian.templaterenderer.RenderingException;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.microsoft.teams.config.PluginImageSettings;
 import com.microsoft.teams.oauth.PropertiesClient;
-import com.microsoft.teams.service.AppPropertiesService;
-import com.microsoft.teams.service.HostPropertiesService;
-import com.microsoft.teams.service.KeysService;
-import com.microsoft.teams.service.SignalRService;
+import com.microsoft.teams.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +42,7 @@ public class ConfigPageServlet extends HttpServlet {
     private final KeysService keysService;
     private final HostPropertiesService hostProperties;
     private final PluginImageSettings pluginImageSettings;
+    private final ApplicationLinkCreatorService applicationLinkCreatorService;
 
     @Autowired
     public ConfigPageServlet(@ComponentImport TemplateRenderer renderer,
@@ -53,7 +51,8 @@ public class ConfigPageServlet extends HttpServlet {
                              AppPropertiesService appProperties,
                              KeysService keysService,
                              HostPropertiesService hostProperties,
-                             PluginImageSettings pluginImageSettings) {
+                             PluginImageSettings pluginImageSettings,
+                             ApplicationLinkCreatorService applicationLinkCreatorService) {
         this.renderer = renderer;
         this.redirectHelper = redirectHelper;
         this.signalRService = signalRService;
@@ -61,6 +60,7 @@ public class ConfigPageServlet extends HttpServlet {
         this.keysService = keysService;
         this.hostProperties = hostProperties;
         this.pluginImageSettings = pluginImageSettings;
+        this.applicationLinkCreatorService = applicationLinkCreatorService;
     }
 
     @Override
@@ -129,10 +129,14 @@ public class ConfigPageServlet extends HttpServlet {
         teamsContext.put("atlasHome", hostProperties.getFullBaseUrl());
         teamsContext.put("atlasId", keysService.getAtlasId());
         teamsContext.put("pluginKey", appProperties.getPluginKey());
+        teamsContext.put("appBaseUrl", appProperties.getTeamsAppBaseUrl());
         teamsContext.put("isConnectionActive", signalRService.isActiveConnection());
         teamsContext.put("embedIcons", pluginImageSettings.getEmbedIconsSetting());
         teamsContext.put("embedAvatars", pluginImageSettings.getEmbedAvatarsSetting());
         teamsContext.put("embedProjectAvatars", pluginImageSettings.getEmbedProjectAvatarsSetting());
+        teamsContext.put("isApplicationLinkCreated", applicationLinkCreatorService.getApplicationLink() != null);
+        teamsContext.put("applicationLinkName", applicationLinkCreatorService.getApplicationLink() != null ?
+                applicationLinkCreatorService.getApplicationLink().getName() : ApplicationLinkCreatorService.TEAMS_APPLICATION_LINK_NAME);
 
         LOG.debug("Get keys inside the context. Consumer key = {}, Atlas id = {}, Public key = {}", keysService.getConsumerKey(), keysService.getAtlasId(), keysService.getPublicKey());
 
