@@ -24,6 +24,7 @@
         <resource type="download" name="integration.css" location="/css/integration.css"/>
         <resource type="download" name="integration.js" location="/js/integration.js"/>
         <resource type="download" name="images/" location="/images"/>
+        <resource type="download" name="authEnd.css" location="/css/authEnd.css"/>
 
         <context>integration</context>
     </web-resource>
@@ -49,6 +50,10 @@
 
     <servlet key="atlasId-servlet" class="com.microsoft.teams.servlets.JiraServerIdServlet" name="jiraServerIdServlet">
         <url-pattern>/teams/getJiraServerId</url-pattern>
+    </servlet>
+
+    <servlet key="auth-end" class="com.microsoft.teams.servlets.AuthEndServlet" name="authEndServlet">
+        <url-pattern>/teams/authEnd</url-pattern>
     </servlet>
 
     <servlet key="test" class="com.microsoft.teams.servlets.TeamsAtlasUserServlet" name="mappingServlet">

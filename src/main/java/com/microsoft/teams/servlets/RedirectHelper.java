@@ -46,6 +46,17 @@ class RedirectHelper {
         return checkResult;
     }
 
+    boolean isUserLoggedIn(HttpServletRequest request, HttpServletResponse response) {
+        boolean checkResult = false;
+        String username = userManager.getRemoteUsername(request);
+        if (username == null) {
+            redirectToLogin(request, response);
+        } else {
+            checkResult = true;
+        }
+        return checkResult;
+    }
+
     private void redirectToDashboard(HttpServletResponse response) {
         try {
             response.sendRedirect(String.format(DASHBORD_URL, hostProperties.getFullBaseUrl()));

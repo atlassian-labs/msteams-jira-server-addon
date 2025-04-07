@@ -27,18 +27,20 @@ public class ApplicationLinkCreatorService {
     private final MutatingApplicationLinkService mutatingApplicationLinkService;
     private final ServiceProviderConsumerStore serviceProviderConsumerStore;
     private final ServiceProviderTokenStore serviceProviderTokenStore;
+    private final HostPropertiesService hostProperties;
     private final TypeAccessor typeAccessor;
     private final AppPropertiesService appProperties;
 
     @Autowired
     public ApplicationLinkCreatorService(
             MutatingApplicationLinkService mutatingApplicationLinkService,
-            ServiceProviderConsumerStore serviceProviderConsumerStore, ServiceProviderTokenStore serviceProviderTokenStore,
+            ServiceProviderConsumerStore serviceProviderConsumerStore, ServiceProviderTokenStore serviceProviderTokenStore, HostPropertiesService hostProperties,
             TypeAccessor typeAccessor,
             AppPropertiesService appProperties) {
         this.mutatingApplicationLinkService = mutatingApplicationLinkService;
         this.serviceProviderConsumerStore = serviceProviderConsumerStore;
         this.serviceProviderTokenStore = serviceProviderTokenStore;
+        this.hostProperties = hostProperties;
         this.typeAccessor = typeAccessor;
         this.appProperties = appProperties;
     }
@@ -71,6 +73,7 @@ public class ApplicationLinkCreatorService {
                 Consumer consumer = Consumer.key(consumerKey)
                         .name(PropertiesClient.MICROSOFT_TEAMS_INTEGRATION)
                         .publicKey(RSAKeys.fromPemEncodingToPublicKey(publicKey))
+                        .callback(new URI(hostProperties.getFullBaseUrl() + "/plugins/servlet/teams/authEnd"))
                         .build();
 
                 serviceProviderConsumerStore.put(consumer);

@@ -107,6 +107,7 @@ definitions:
           password: $PIPELINES_JWT_TOKEN
         script:
           - atlas-mvn verify sonar:sonar -Dsonar.projectKey=msteams-jira-onprem-addon -Pcoverage
+          - sleep 30 # wait for Sonar Quality Gate to process the results
           - |
             ENCODED_BRANCH=$(echo "$BITBUCKET_BRANCH" | jq -sRr @uri)
             STATUS=$(curl -s -u $SONAR_TOKEN: "https://sonar-enterprise.internal.atlassian.com/api/qualitygates/project_status?projectKey=msteams-jira-onprem-addon&branch=$ENCODED_BRANCH" | jq -r .projectStatus.status)

@@ -42,6 +42,9 @@ class ApplicationLinkCreatorServiceTest {
     @Mock
     private ApplicationLink applicationLink;
 
+    @Mock
+    private HostPropertiesService hostProperties;
+
     @InjectMocks
     private ApplicationLinkCreatorService applicationLinkCreatorService;
 
@@ -49,10 +52,12 @@ class ApplicationLinkCreatorServiceTest {
     @Test
     void testCreateApplicationLink() throws Exception {
         String baseUrl = "http://example.com";
+        String jiraBaseUrl = "http://jira-example.com";
         when(appProperties.getTeamsAppBaseUrl()).thenReturn(baseUrl);
         when(mutatingApplicationLinkService.getApplicationLinks()).thenReturn(Collections.emptyList());
         when(mutatingApplicationLinkService.createApplicationLink(any(GenericApplicationType.class), any(ApplicationLinkDetails.class))).thenReturn(applicationLink);
         when(typeAccessor.getApplicationType(GenericApplicationType.class)).thenReturn(mock(GenericApplicationType.class));
+        when(hostProperties.getFullBaseUrl()).thenReturn(jiraBaseUrl);
 
         Map<String, String> properties = new HashMap<>();
         properties.put(PropertiesClient.CONSUMER_KEY, "consumerKey");
