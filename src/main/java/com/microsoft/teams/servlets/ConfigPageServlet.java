@@ -6,7 +6,7 @@ import com.atlassian.jira.security.xsrf.XsrfTokenGenerator;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.templaterenderer.RenderingException;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import com.microsoft.teams.config.PluginImageSettings;
+import com.microsoft.teams.config.PluginSettings;
 import com.microsoft.teams.oauth.PropertiesClient;
 import com.microsoft.teams.service.*;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ public class ConfigPageServlet extends HttpServlet {
     private final AppPropertiesService appProperties;
     private final KeysService keysService;
     private final HostPropertiesService hostProperties;
-    private final PluginImageSettings pluginImageSettings;
+    private final PluginSettings pluginSettings;
     private final ApplicationLinkCreatorService applicationLinkCreatorService;
 
     @Autowired
@@ -51,7 +51,7 @@ public class ConfigPageServlet extends HttpServlet {
                              AppPropertiesService appProperties,
                              KeysService keysService,
                              HostPropertiesService hostProperties,
-                             PluginImageSettings pluginImageSettings,
+                             PluginSettings pluginSettings,
                              ApplicationLinkCreatorService applicationLinkCreatorService) {
         this.renderer = renderer;
         this.redirectHelper = redirectHelper;
@@ -59,7 +59,7 @@ public class ConfigPageServlet extends HttpServlet {
         this.appProperties = appProperties;
         this.keysService = keysService;
         this.hostProperties = hostProperties;
-        this.pluginImageSettings = pluginImageSettings;
+        this.pluginSettings = pluginSettings;
         this.applicationLinkCreatorService = applicationLinkCreatorService;
     }
 
@@ -100,24 +100,24 @@ public class ConfigPageServlet extends HttpServlet {
         }
 
         Optional<String> doEmbedIcons = Optional.ofNullable(request.getParameter(EMBED_ICONS));
-        if (doEmbedIcons.isPresent() && !pluginImageSettings.getEmbedIconsSetting()) {
-            pluginImageSettings.setEmbedIconsSetting(true);
-        } else if (!doEmbedIcons.isPresent() && pluginImageSettings.getEmbedIconsSetting()) {
-            pluginImageSettings.setEmbedIconsSetting(false);
+        if (doEmbedIcons.isPresent() && !pluginSettings.getEmbedIconsSetting()) {
+            pluginSettings.setEmbedIconsSetting(true);
+        } else if (!doEmbedIcons.isPresent() && pluginSettings.getEmbedIconsSetting()) {
+            pluginSettings.setEmbedIconsSetting(false);
         }
 
         Optional<String> doEmbedAvatars = Optional.ofNullable(request.getParameter(EMBED_AVATARS));
-        if (doEmbedAvatars.isPresent() && !pluginImageSettings.getEmbedAvatarsSetting()) {
-            pluginImageSettings.setEmbedAvatarsSetting(true);
-        } else if (!doEmbedAvatars.isPresent() && pluginImageSettings.getEmbedAvatarsSetting()) {
-            pluginImageSettings.setEmbedAvatarsSetting(false);
+        if (doEmbedAvatars.isPresent() && !pluginSettings.getEmbedAvatarsSetting()) {
+            pluginSettings.setEmbedAvatarsSetting(true);
+        } else if (!doEmbedAvatars.isPresent() && pluginSettings.getEmbedAvatarsSetting()) {
+            pluginSettings.setEmbedAvatarsSetting(false);
         }
 
         Optional<String> doEmbedProjectAvatars = Optional.ofNullable(request.getParameter(EMBED_PROJECT_AVATARS));
-        if (doEmbedProjectAvatars.isPresent() && !pluginImageSettings.getEmbedProjectAvatarsSetting()) {
-            pluginImageSettings.setEmbedProjectAvatarsSetting(true);
-        } else if (!doEmbedProjectAvatars.isPresent() && pluginImageSettings.getEmbedProjectAvatarsSetting()) {
-            pluginImageSettings.setEmbedProjectAvatarsSetting(false);
+        if (doEmbedProjectAvatars.isPresent() && !pluginSettings.getEmbedProjectAvatarsSetting()) {
+            pluginSettings.setEmbedProjectAvatarsSetting(true);
+        } else if (!doEmbedProjectAvatars.isPresent() && pluginSettings.getEmbedProjectAvatarsSetting()) {
+            pluginSettings.setEmbedProjectAvatarsSetting(false);
         }
     }
 
@@ -131,9 +131,9 @@ public class ConfigPageServlet extends HttpServlet {
         teamsContext.put("pluginKey", appProperties.getPluginKey());
         teamsContext.put("appBaseUrl", appProperties.getTeamsAppBaseUrl());
         teamsContext.put("isConnectionActive", signalRService.isActiveConnection());
-        teamsContext.put("embedIcons", pluginImageSettings.getEmbedIconsSetting());
-        teamsContext.put("embedAvatars", pluginImageSettings.getEmbedAvatarsSetting());
-        teamsContext.put("embedProjectAvatars", pluginImageSettings.getEmbedProjectAvatarsSetting());
+        teamsContext.put("embedIcons", pluginSettings.getEmbedIconsSetting());
+        teamsContext.put("embedAvatars", pluginSettings.getEmbedAvatarsSetting());
+        teamsContext.put("embedProjectAvatars", pluginSettings.getEmbedProjectAvatarsSetting());
         teamsContext.put("isApplicationLinkCreated", applicationLinkCreatorService.getApplicationLink() != null);
         teamsContext.put("applicationLinkName", applicationLinkCreatorService.getApplicationLink() != null ?
                 applicationLinkCreatorService.getApplicationLink().getName() : ApplicationLinkCreatorService.TEAMS_APPLICATION_LINK_NAME);

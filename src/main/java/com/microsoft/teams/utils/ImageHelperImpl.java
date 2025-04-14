@@ -1,7 +1,7 @@
 package com.microsoft.teams.utils;
 
 import com.google.api.client.http.HttpRequestFactory;
-import com.microsoft.teams.config.PluginImageSettings;
+import com.microsoft.teams.config.PluginSettings;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,24 +26,24 @@ public class ImageHelperImpl implements ImageHelper {
     private static final long TEN_MB = 10000000;
     private static Map<String, String> iconUrlBase64Map = new HashMap<>();
     private ImageEncoder imageEncoder;
-    private PluginImageSettings pluginImageSettings;
+    private PluginSettings pluginSettings;
 
     @Autowired
-    public ImageHelperImpl(ImageEncoder imageEncoder, PluginImageSettings pluginImageSettings) {
+    public ImageHelperImpl(ImageEncoder imageEncoder, PluginSettings pluginSettings) {
         this.imageEncoder = imageEncoder;
-        this.pluginImageSettings = pluginImageSettings;
+        this.pluginSettings = pluginSettings;
     }
 
     public String replaceImagesInJson(String jsonString, String baseUrl, HttpRequestFactory factory) {
          long start = System.currentTimeMillis();
 
-        if (pluginImageSettings.hasChanged()) {
+        if (pluginSettings.hasChanged()) {
             iconUrlBase64Map = new HashMap<>();
 
-            pluginImageSettings.resetObservableState();
+            pluginSettings.resetObservableState();
         }
 
-        if (pluginImageSettings.getEmbedIconsSetting()) {
+        if (pluginSettings.getEmbedIconsSetting()) {
             collectImages(jsonString, baseUrl, factory, ICON_PATTERN, iconUrlBase64Map);
 
             if (!iconUrlBase64Map.isEmpty()) {
@@ -51,7 +51,7 @@ public class ImageHelperImpl implements ImageHelper {
             }
         }
 
-        if (pluginImageSettings.getEmbedProjectAvatarsSetting() || pluginImageSettings.getEmbedAvatarsSetting()) {
+        if (pluginSettings.getEmbedProjectAvatarsSetting() || pluginSettings.getEmbedAvatarsSetting()) {
             collectImages(jsonString, baseUrl, factory, AVATAR_PATTERN, iconUrlBase64Map);
 
             if (!iconUrlBase64Map.isEmpty()) {
@@ -93,13 +93,13 @@ public class ImageHelperImpl implements ImageHelper {
                     if (iconUrlString.contains(ICON_URL)) {
                         iconUrlBase64Map.put(iconUrlString, String.format("%s\":\"%s\"", iconUrlKey, imageEncoder.encodeImageToBase64(iconUrl, factory)));
                     }
-                    if (pluginImageSettings.getEmbedProjectAvatarsSetting() && !pluginImageSettings.getEmbedAvatarsSetting()) {
+                    if (pluginSettings.getEmbedProjectAvatarsSetting() && !pluginSettings.getEmbedAvatarsSetting()) {
                         if (iconUrl.contains(PRIORITIES) || iconUrl.contains(PROJECT_AVATAR)) {
                             iconUrlBase64Map.put(iconUrlString, String.format("%s\":\"%s\"", iconUrlKey, imageEncoder.encodeImageToBase64(iconUrl, factory)));
                         }
                     }
-                    if (pluginImageSettings.getEmbedAvatarsSetting()) {
-                        if (!pluginImageSettings.getEmbedProjectAvatarsSetting()) {
+                    if (pluginSettings.getEmbedAvatarsSetting()) {
+                        if (!pluginSettings.getEmbedProjectAvatarsSetting()) {
                             if (!(iconUrl.contains(PRIORITIES) || iconUrl.contains(PROJECT_AVATAR))) {
                                 iconUrlBase64Map.put(iconUrlString, String.format("%s\":\"%s\"", iconUrlKey, imageEncoder.encodeImageToBase64(iconUrl, factory)));
                             }

@@ -6,8 +6,8 @@ import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
-import com.microsoft.teams.config.PluginImageSettings;
-import com.microsoft.teams.config.PluginImageSettingsImpl;
+import com.microsoft.teams.config.PluginSettings;
+import com.microsoft.teams.config.PluginSettingsImpl;
 import com.microsoft.teams.service.AppSettingsService;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class ImageHelperImplTest {
 
     @Mock
     private AppSettingsService appSettingsService;
-    private PluginImageSettings spyPluginImageSettings;
+    private PluginSettings spyPluginSettings;
 
     private static final String BASE_URL = "http://localhost:8080/myjira";
     private static final String REPLACEMENT = "data:image/png";
@@ -37,7 +37,7 @@ public class ImageHelperImplTest {
 
     @Before
     public void setUp() {
-        spyPluginImageSettings = Mockito.spy(new PluginImageSettingsImpl(appSettingsService));
+        spyPluginSettings = Mockito.spy(new PluginSettingsImpl(appSettingsService));
     }
 
     private String getJson(String baseUrl) {
@@ -232,7 +232,7 @@ public class ImageHelperImplTest {
         HttpTransport transport = getHttpTransport();
         mockSettings(true, true, true);
 
-        String result = new ImageHelperImpl(new ImageEncoderImpl(), spyPluginImageSettings)
+        String result = new ImageHelperImpl(new ImageEncoderImpl(), spyPluginSettings)
                 .replaceImagesInJson(response, BASE_URL, transport.createRequestFactory());
 
         int replacedUrlsCount = getReplacedUrlsCount(REPLACEMENT, result);
@@ -248,7 +248,7 @@ public class ImageHelperImplTest {
         HttpTransport transport = getHttpTransport();
         mockSettings(true, false, false);
 
-        String result = new ImageHelperImpl(new ImageEncoderImpl(), spyPluginImageSettings)
+        String result = new ImageHelperImpl(new ImageEncoderImpl(), spyPluginSettings)
                 .replaceImagesInJson(response, BASE_URL, transport.createRequestFactory());
 
         int replacedUrlsCount = getReplacedUrlsCount(REPLACEMENT, result);
@@ -262,7 +262,7 @@ public class ImageHelperImplTest {
         HttpTransport transport = getHttpTransport();
         mockSettings(false, false, true);
 
-        String result = new ImageHelperImpl(new ImageEncoderImpl(), spyPluginImageSettings)
+        String result = new ImageHelperImpl(new ImageEncoderImpl(), spyPluginSettings)
                 .replaceImagesInJson(response, BASE_URL, transport.createRequestFactory());
 
         int replacedUrlsCount = getReplacedUrlsCount(REPLACEMENT, result);
@@ -276,7 +276,7 @@ public class ImageHelperImplTest {
         HttpTransport transport = getHttpTransport();
         mockSettings(false, true, true);
 
-        String result = new ImageHelperImpl(new ImageEncoderImpl(), spyPluginImageSettings)
+        String result = new ImageHelperImpl(new ImageEncoderImpl(), spyPluginSettings)
                 .replaceImagesInJson(response, BASE_URL, transport.createRequestFactory());
 
         int replacedUrlsCount = getReplacedUrlsCount(REPLACEMENT, result);
@@ -291,7 +291,7 @@ public class ImageHelperImplTest {
         HttpTransport transport = getHttpTransport();
         mockSettings(false, true, false);
 
-        String result = new ImageHelperImpl(new ImageEncoderImpl(), spyPluginImageSettings)
+        String result = new ImageHelperImpl(new ImageEncoderImpl(), spyPluginSettings)
                 .replaceImagesInJson(response, BASE_URL, transport.createRequestFactory());
 
         int replacedUrlsCount = getReplacedUrlsCount(REPLACEMENT, result);
@@ -336,6 +336,6 @@ public class ImageHelperImplTest {
         settings.put(SETTINGS_EMBED_AVATARS, Boolean.toString(embedAvatars));
 
         Mockito.when(appSettingsService.get()).thenReturn(settings);
-        Mockito.when(spyPluginImageSettings.hasChanged()).thenReturn(true);
+        Mockito.when(spyPluginSettings.hasChanged()).thenReturn(true);
     }
 }

@@ -15,4 +15,12 @@ public interface AppSettings extends Entity {
     Boolean getEmbedProjectAvatars();
 
     void setEmbedProjectAvatars(Boolean embedProjectAvatars);
+
+    Boolean getPersonalNotifications();
+
+    void setPersonalNotifications(Boolean personalNotifications);
+
+    Boolean getGroupNotifications();
+
+    void setGroupNotifications(Boolean groupNotifications);
 }
