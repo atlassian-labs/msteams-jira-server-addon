@@ -1,8 +1,10 @@
 package com.microsoft.teams.service;
 
+import com.google.gson.Gson;
 import com.microsoft.signalr.HubConnection;
 import com.microsoft.signalr.HubConnectionBuilder;
 import com.microsoft.signalr.HubConnectionState;
+import com.microsoft.teams.service.models.notification.MsTeamsNotificationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,6 +48,15 @@ public class SignalRService implements DisposableBean {
         initConnection();
         startConnectionIfDisconnected();
         logMemoryUsage("[startSignalRConnection()] After start connection");
+    }
+
+    public void sendNotificationEvent(MsTeamsNotificationEvent event) {
+        try {
+            String identifier = UUID.randomUUID().toString();
+            hubConnection.send("Notification", identifier, new Gson().toJson(event));
+        } catch (Exception e) {
+            exceptionLogExtender("sendNotificationEvent() error", Level.DEBUG, e);
+        }
     }
 
     private void updateConnectionStatus() {
@@ -116,8 +128,7 @@ public class SignalRService implements DisposableBean {
         try {
             hubConnection.send("Callback", identifier, response);
         } catch (Exception e) {
-            String signature = "sendResponse() error ";
-            exceptionLogExtender(signature, Level.DEBUG, e);
+            exceptionLogExtender("sendResponse() error", Level.DEBUG, e);
         }
     }
 
