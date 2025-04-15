@@ -37,13 +37,19 @@ public class NotificationEventService {
     private static final Logger LOG = LoggerFactory.getLogger(NotificationEventService.class);
     public static final String CHANGELOG_ASSIGNEE = "assignee";
     private final TeamsAtlasUserService teamsAtlasUserService;
+    private final SignalRService signalRService;
     private final AppKeysService appKeysService;
     private final PluginSettings pluginSettings;
     private MsTeamsNotificationEvent notificationEvent;
 
     @Autowired
-    public NotificationEventService(TeamsAtlasUserService teamsAtlasUserService, AppKeysService appKeysService, PluginSettings pluginSettings) {
+    public NotificationEventService(
+            TeamsAtlasUserService teamsAtlasUserService,
+            SignalRService signalRService,
+            AppKeysService appKeysService,
+            PluginSettings pluginSettings) {
         this.teamsAtlasUserService = teamsAtlasUserService;
+        this.signalRService = signalRService;
         this.appKeysService = appKeysService;
         this.pluginSettings = pluginSettings;
     }
@@ -81,6 +87,7 @@ public class NotificationEventService {
                 return;
             }
             LOG.trace("Send notify object {} to MSTeams", notificationEvent);
+            this.signalRService.sendNotificationEvent(notificationEvent);
         }
     }
 
