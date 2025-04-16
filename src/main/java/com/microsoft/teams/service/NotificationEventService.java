@@ -1,12 +1,19 @@
 package com.microsoft.teams.service;
 
 import com.atlassian.jira.avatar.AvatarService;
+import com.atlassian.jira.bc.issue.comment.property.CommentPropertyService;
 import com.atlassian.jira.bc.issue.watcher.WatcherService;
 import com.atlassian.jira.bc.issue.watcher.WatchingDisabledException;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.entity.property.EntityProperty;
+import com.atlassian.jira.entity.property.EntityPropertyService;
 import com.atlassian.jira.event.issue.IssueEvent;
 import com.atlassian.jira.event.type.EventType;
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.comments.Comment;
+import com.atlassian.jira.issue.comments.CommentPermissionManager;
+import com.atlassian.jira.security.PermissionManager;
+import com.atlassian.jira.security.plugin.ProjectPermissionKey;
 import com.atlassian.jira.user.ApplicationUser;
 import com.microsoft.teams.ao.TeamsAtlasUser;
 import com.microsoft.teams.config.PluginSettings;
@@ -17,6 +24,8 @@ import com.microsoft.teams.service.models.notification.NotificationEventIssue;
 import com.microsoft.teams.service.models.notification.NotificationEventType;
 import com.microsoft.teams.service.models.notification.NotificationEventUser;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
 import org.slf4j.Logger;
@@ -40,6 +49,7 @@ public class NotificationEventService {
     private final SignalRService signalRService;
     private final AppKeysService appKeysService;
     private final PluginSettings pluginSettings;
+    private final HostPropertiesService hostProperties;
     private MsTeamsNotificationEvent notificationEvent;
 
     @Autowired
@@ -47,11 +57,12 @@ public class NotificationEventService {
             TeamsAtlasUserService teamsAtlasUserService,
             SignalRService signalRService,
             AppKeysService appKeysService,
-            PluginSettings pluginSettings) {
+            PluginSettings pluginSettings, HostPropertiesService hostProperties) {
         this.teamsAtlasUserService = teamsAtlasUserService;
         this.signalRService = signalRService;
         this.appKeysService = appKeysService;
         this.pluginSettings = pluginSettings;
+        this.hostProperties = hostProperties;
     }
 
     public MsTeamsNotificationEvent buildNotificationEvent(IssueEvent issueEvent) {
@@ -63,7 +74,7 @@ public class NotificationEventService {
 
             notificationEvent.setJiraId(appKeysService.getAtlasId());
             notificationEvent.setEventType(getEventType(issueEvent));
-            notificationEvent.setUser(buildNotificationEventUser(issueEventUser));
+            notificationEvent.setUser(buildNotificationEventUser(issueEventUser, issueEvent));
             notificationEvent.setIssue(buildNotificationEventIssue(issueEvent));
             notificationEvent.setChangelog(buildNotificationEventChangeLog(issueEvent));
             notificationEvent.setComment(buildNotificationEventComment(issueEvent));
@@ -91,7 +102,7 @@ public class NotificationEventService {
         }
     }
 
-    private NotificationEventUser buildNotificationEventUser(ApplicationUser applicationUser) {
+    private NotificationEventUser buildNotificationEventUser(ApplicationUser applicationUser, IssueEvent issueEvent) {
         if (applicationUser == null) {
             return null;
         }
@@ -105,13 +116,17 @@ public class NotificationEventService {
         if (!teamsAtlasUsers.isEmpty()) {
             notificationEventUser.setMicrosoftId(teamsAtlasUsers.get(0).getMsTeamsUserId());
             notificationEvent.incrementReceiversCount();
+
+            // check view permissions only for connected users
+            notificationEventUser.setCanViewIssue(canUserViewIssue(applicationUser, issueEvent.getIssue()));
+            notificationEventUser.setCanViewComment(canUserViewComment(applicationUser, issueEvent.getComment()));
         }
 
         try {
             AvatarService avatarService = ComponentAccessor.getComponent(AvatarService.class);
             notificationEventUser.setAvatarUrl(avatarService.getAvatarURL(applicationUser, applicationUser).toString());
         } catch (Exception e) {
-            LOG.warn("Cannot get avatar URL for user: {}", applicationUser.getName(), e);
+            LOG.trace("Cannot get avatar URL for user: {}", applicationUser.getName(), e);
         }
 
         return notificationEventUser;
@@ -143,7 +158,7 @@ public class NotificationEventService {
                 }
 
             } catch (GenericEntityException e) {
-                LOG.error("Cannot get change log data from the event", e);
+                LOG.trace("Cannot get change log data from the event", e);
             }
         } else {
             return null;
@@ -154,10 +169,14 @@ public class NotificationEventService {
 
     private NotificationEventComment buildNotificationEventComment(IssueEvent issueEvent) {
         final NotificationEventComment notificationEventComment = new NotificationEventComment();
-        if(issueEvent.getComment() != null) {
-            notificationEventComment.setContent(issueEvent.getComment().getBody());
+        final Comment comment = issueEvent.getComment();
+        if(comment != null) {
+            notificationEventComment.setContent(comment.getBody());
+            notificationEventComment.setInternal(isCommentInternal(comment));
+
+            return notificationEventComment;
         }
-        return notificationEventComment;
+        return null;
     }
 
     private NotificationEventIssue buildNotificationEventIssue(IssueEvent issueEvent) {
@@ -171,9 +190,10 @@ public class NotificationEventService {
         notificationEventIssue.setKey(issue.getKey());
         notificationEventIssue.setSummary(issue.getSummary());
         notificationEventIssue.setStatus(issue.getStatus().getName());
+        notificationEventIssue.setSelf(hostProperties.getFullBaseUrl() + "/browse/" + issue.getKey());
 
-        notificationEventIssue.setAssignee(buildNotificationEventUser(issueAssignee));
-        notificationEventIssue.setReporter(buildNotificationEventUser(issueReporter));
+        notificationEventIssue.setAssignee(buildNotificationEventUser(issueAssignee, issueEvent));
+        notificationEventIssue.setReporter(buildNotificationEventUser(issueReporter, issueEvent));
 
         if(Objects.nonNull(issue.getIssueType())) {
             notificationEventIssue.setType(issue.getIssueType().getName());
@@ -208,11 +228,14 @@ public class NotificationEventService {
             try {
                 List<ApplicationUser> watchers = watcherService.getWatchers(issue, user).get().second();
                 notificationEventWatchers = watchers.stream()
-                        .map(this::buildNotificationEventUser)
+                        .map(watcher -> buildNotificationEventUser(watcher, issueEvent))
                         .collect(Collectors.toList());
+                if(watchers.isEmpty()) {
+                    continue; // try to get watchers for the next user
+                }
                 break; // Exit if watchers are successfully retrieved
             } catch (WatchingDisabledException e) {
-                LOG.warn("Error while trying to get watchers with user: {}", user.getName(), e);
+                LOG.trace("Error while trying to get watchers with user: {}", user.getName(), e);
             }
         }
 
@@ -236,7 +259,7 @@ public class NotificationEventService {
 
                     ApplicationUser mentionedUser = ComponentAccessor.getUserManager().getUserByKey(mention);
                     if (mentionedUser != null) {
-                        notificationEventMentions.add(buildNotificationEventUser(mentionedUser));
+                        notificationEventMentions.add(buildNotificationEventUser(mentionedUser, issueEvent));
                     }
                 }
             }
@@ -276,4 +299,76 @@ public class NotificationEventService {
         return eventType;
     }
 
+    private boolean isCommentInternal(Comment comment) {
+        try {
+            CommentPropertyService propertyService
+                    = ComponentAccessor.getComponent(CommentPropertyService.class);
+            EntityPropertyService.PropertyResult propertyResult
+                    = propertyService.getProperty(null, comment.getId(), "sd.public.comment");
+            EntityProperty entityProperty = propertyResult.getEntityProperty().getOrNull();
+            // if the property is not set, we assume it's not internal
+            if (entityProperty == null) {
+                return false;
+            }
+            String propertyValue = entityProperty.getValue();
+            if (propertyValue != null) {
+                return isCommentInternalPropertySet(propertyValue);
+            }
+        } catch (Exception e) {
+            LOG.trace("Error while checking comment internal status", e);
+        }
+        return false;
+    }
+
+    private boolean isCommentInternalPropertySet(String propertyValue) {
+        try {
+            // check if the property value with key "internal" is set to true
+            JSONObject jsonObject = new JSONObject(propertyValue);
+            return jsonObject.optBoolean("internal", true);
+        } catch (JSONException e) {
+            LOG.trace("Error parsing entity property value as JSON: {}", propertyValue, e);
+            return true;
+        }
+    }
+
+    private boolean canUserViewComment(ApplicationUser user, Comment comment) {
+        if (comment == null) {
+            return false;
+        }
+        try {
+            CommentPermissionManager permissionManager = ComponentAccessor.getComponent(CommentPermissionManager.class);
+            boolean canViewComment = permissionManager.hasBrowsePermission(user, comment);
+            if(isCommentInternal(comment)) {
+                return canViewComment &&
+                        isUserServiceDeskAgentForIssue(user, comment.getIssue());
+            }
+            return canViewComment;
+        } catch (Exception e) {
+            LOG.trace("Error while checking comment visibility", e);
+            return false;
+        }
+    }
+
+    private boolean canUserViewIssue(ApplicationUser user, Issue issue) {
+        return hasPermissions("BROWSE_PROJECTS", user, issue);
+    }
+
+    private boolean isUserServiceDeskAgentForIssue(ApplicationUser user, Issue issue) {
+        return hasPermissions("SERVICEDESK_AGENT", user, issue);
+    }
+
+    private boolean hasPermissions(String permissionKey, ApplicationUser user, Issue issue) {
+        try {
+            if (user == null || issue == null) {
+                return false;
+            }
+
+            PermissionManager permissionManager = ComponentAccessor.getPermissionManager();
+            return permissionManager.hasPermission(new ProjectPermissionKey(permissionKey), issue, user);
+
+        } catch (Exception e) {
+            LOG.trace("Error while checking user permissions", e);
+            return false;
+        }
+    }
 }

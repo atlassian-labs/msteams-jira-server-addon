@@ -5,6 +5,8 @@ public class NotificationEventUser {
     String microsoftId;
     String name;
     String avatarUrl;
+    boolean canViewIssue;
+    boolean canViewComment;
 
     public NotificationEventUser() {
     }
@@ -44,6 +46,22 @@ public class NotificationEventUser {
         this.avatarUrl = avatarUrl;
     }
 
+    public boolean canViewIssue() {
+        return canViewIssue;
+    }
+
+    public void setCanViewIssue(boolean canViewIssue) {
+        this.canViewIssue = canViewIssue;
+    }
+
+    public boolean canViewComment() {
+        return canViewComment;
+    }
+
+    public void setCanViewComment(boolean canViewComment) {
+        this.canViewComment = canViewComment;
+    }
+
     @Override
     public String toString() {
         return "NotificationEventUser{" +
@@ -51,6 +69,8 @@ public class NotificationEventUser {
                 ", microsoftId='" + microsoftId + '\'' +
                 ", name='" + name + '\'' +
                 ", avatarUrl='" + avatarUrl + '\'' +
+                ", canViewIssue=" + canViewIssue +
+                ", canViewComment=" + canViewComment +
                 '}';
     }
 }
