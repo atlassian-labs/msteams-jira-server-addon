@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 public class NotificationEventService {
     private static final Logger LOG = LoggerFactory.getLogger(NotificationEventService.class);
     public static final String CHANGELOG_ASSIGNEE = "assignee";
+    public static final String CHANGELOG_DESCRIPTION = "description";
     private final TeamsAtlasUserService teamsAtlasUserService;
     private final SignalRService signalRService;
     private final AppKeysService appKeysService;
@@ -244,13 +245,20 @@ public class NotificationEventService {
 
     private List<NotificationEventUser> getEventMentions(IssueEvent issueEvent) {
         List<NotificationEventUser> notificationEventMentions = new ArrayList<>();
-        final Issue issue = issueEvent.getIssue();
-        final String issueDescription = issue.getDescription();
+        final NotificationEventChangeLog descriptionChangelog
+                = this.notificationEvent.getChangelog() != null ?
+                    this.notificationEvent.getChangelog()
+                            .stream()
+                            .filter(cl -> cl.getField().equals(CHANGELOG_DESCRIPTION))
+                            .findFirst()
+                            .orElse(null)
+                : null;
+        final String descriptionChangelogTo = descriptionChangelog != null ? descriptionChangelog.getTo() : "";
         final String issueComment = issueEvent.getComment() != null ? issueEvent.getComment().getBody() : null;
 
         final Pattern mentionPattern = Pattern.compile("\\[~(.*?)]");
 
-        List<String> fieldsToCheck = Arrays.asList(issueDescription, issueComment);
+        List<String> fieldsToCheck = Arrays.asList(descriptionChangelogTo, issueComment);
         for (String field : fieldsToCheck) {
             if (field != null) {
                 Matcher mentionMatcher = mentionPattern.matcher(field);
