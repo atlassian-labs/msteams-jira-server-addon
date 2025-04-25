@@ -42,10 +42,10 @@ public class AppSettingsServiceImpl implements AppSettingsService{
                 appSettings.setEmbedProjectAvatars(Boolean.parseBoolean(keys.get(SETTINGS_EMBED_PROJECT_AVATARS)));
             }
             if (keys.containsKey(SETTINGS_PERSONAL_NOTIFICATIONS_CONFIGURED)) {
-                appSettings.setPersonalNotifications(true);
+                appSettings.setPersonalNotifications(Boolean.parseBoolean(keys.get(SETTINGS_PERSONAL_NOTIFICATIONS_CONFIGURED)));
             }
             if (keys.containsKey(SETTINGS_GROUP_NOTIFICATIONS_CONFIGURED)) {
-                appSettings.setGroupNotifications(true);
+                appSettings.setGroupNotifications(Boolean.parseBoolean(keys.get(SETTINGS_GROUP_NOTIFICATIONS_CONFIGURED)));
             }
             LOG.debug("Saving keys to AO transaction started. Settings: Embed icons - {}, Embed avatars  - {}, Embed project avatars - {}, Personal notifications configured - {}, Group notifications configured - {}",
                     appSettings.getEmbedIcons(),

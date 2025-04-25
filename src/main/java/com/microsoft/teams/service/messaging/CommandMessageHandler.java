@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
+import com.microsoft.teams.config.PluginSettings;
 import com.microsoft.teams.service.HttpClientService;
 import com.microsoft.teams.service.TeamsAtlasUserServiceImpl;
 import com.microsoft.teams.service.models.CommandMessage;
@@ -28,8 +29,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class CommandMessageHandler implements ProcessMessageStrategy {
 
+    // Should match parameter sent by JiraServerCommandRequest in Teams app
+    public static final String LOGOUT_COMMAND_NAME = "Logout";
+    public static final String ENABLE_PERSONAL_NOTIFICATIONS_COMMAND_NAME = "EnablePersonalNotifications";
+    public static final String ENABLE_CHANNEL_NOTIFICATIONS_COMMAND_NAME = "EnableChannelNotifications";
+    public static final String DISABLE_PERSONAL_NOTIFICATIONS_COMMAND_NAME = "DisablePersonalNotifications";
+    public static final String DISABLE_CHANNEL_NOTIFICATIONS_COMMAND_NAME = "DisableChannelNotifications";
     private static final Logger LOG = LoggerFactory.getLogger(CommandMessageHandler.class);
-
     private final TeamsAtlasUserServiceImpl userService;
     private final ImageHelper imageHelper;
     private final HostPropertiesService hostProperties;
@@ -39,25 +45,24 @@ public class CommandMessageHandler implements ProcessMessageStrategy {
             .setConnectTimeout(5000)
             .setConnectionRequestTimeout(5000)
             .build();
-
-    // Should match parameter sent by JiraServerCommandRequest in JiraServerAuthService.DoLogout
-    private final String LOGOUT_COMMAND_NAME = "Logout";
+    private final PluginSettings pluginSettings;
 
     @Autowired
     public CommandMessageHandler(TeamsAtlasUserServiceImpl userService,
                                  ImageHelper imageHelper,
                                  HostPropertiesService hostProperties,
-                                 HttpClientService httpClientService) {
+                                 HttpClientService httpClientService, PluginSettings pluginSettings) {
         this.userService = userService;
         this.imageHelper = imageHelper;
         this.hostProperties = hostProperties;
         this.httpClientService = httpClientService;
+        this.pluginSettings = pluginSettings;
     }
 
     @Override
     public String processMessage(TeamsMessage teamsMessage) {
         int code = 200;
-        String message = StringUtils.EMPTY;
+        String message;
 
         CommandMessage cmdMessage = (CommandMessage) teamsMessage;
         LOG.info("Command received: {}", cmdMessage.getCommand());
@@ -66,6 +71,21 @@ public class CommandMessageHandler implements ProcessMessageStrategy {
             userService.deleteAoObject(teamsId);
             message = String.format("User %s has been successfully deleted", teamsId);
             performUserLogout();
+        } else if (ENABLE_PERSONAL_NOTIFICATIONS_COMMAND_NAME.equals(cmdMessage.getCommand())) {
+            pluginSettings.setPersonalNotificationsSetting(true);
+            message = "Personal notifications settings were successfully enabled";
+        } else if (ENABLE_CHANNEL_NOTIFICATIONS_COMMAND_NAME.equals(cmdMessage.getCommand())) {
+            pluginSettings.setGroupNotificationsSetting(true);
+            message = "Group notifications settings were successfully enabled";
+        } else if (DISABLE_PERSONAL_NOTIFICATIONS_COMMAND_NAME.equals(cmdMessage.getCommand())) {
+            pluginSettings.setPersonalNotificationsSetting(false);
+            message = "Personal notifications settings were successfully disabled";
+        } else if (DISABLE_CHANNEL_NOTIFICATIONS_COMMAND_NAME.equals(cmdMessage.getCommand())) {
+            pluginSettings.setGroupNotificationsSetting(false);
+            message = "Group notifications settings were successfully disabled";
+        } else {
+            code = 400;
+            message = "Unknown command";
         }
 
         return new ResponseMessage(imageHelper)

@@ -24,6 +24,7 @@ import com.microsoft.teams.service.models.notification.NotificationEventIssue;
 import com.microsoft.teams.service.models.notification.NotificationEventType;
 import com.microsoft.teams.service.models.notification.NotificationEventUser;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.ofbiz.core.entity.GenericEntityException;
@@ -46,6 +47,7 @@ public class NotificationEventService {
     private static final Logger LOG = LoggerFactory.getLogger(NotificationEventService.class);
     public static final String CHANGELOG_ASSIGNEE = "assignee";
     public static final String CHANGELOG_DESCRIPTION = "description";
+    public static final int MAX_DATA_LENGTH = 500;
     private final TeamsAtlasUserService teamsAtlasUserService;
     private final SignalRService signalRService;
     private final AppKeysService appKeysService;
@@ -172,7 +174,7 @@ public class NotificationEventService {
         final NotificationEventComment notificationEventComment = new NotificationEventComment();
         final Comment comment = issueEvent.getComment();
         if(comment != null) {
-            notificationEventComment.setContent(comment.getBody());
+            notificationEventComment.setContent(StringUtils.truncate(comment.getBody(), MAX_DATA_LENGTH));
             notificationEventComment.setInternal(isCommentInternal(comment));
 
             return notificationEventComment;
