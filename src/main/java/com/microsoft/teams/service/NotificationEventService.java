@@ -175,7 +175,7 @@ public class NotificationEventService {
         final Comment comment = issueEvent.getComment();
         if(comment != null) {
             notificationEventComment.setContent(StringUtils.truncate(comment.getBody(), MAX_DATA_LENGTH));
-            notificationEventComment.setInternal(isCommentInternal(comment));
+            notificationEventComment.setInternal(isCommentInternal(issueEvent.getUser(), comment));
 
             return notificationEventComment;
         }
@@ -309,12 +309,12 @@ public class NotificationEventService {
         return eventType;
     }
 
-    private boolean isCommentInternal(Comment comment) {
+    private boolean isCommentInternal(ApplicationUser applicationUser, Comment comment) {
         try {
             CommentPropertyService propertyService
                     = ComponentAccessor.getComponent(CommentPropertyService.class);
             EntityPropertyService.PropertyResult propertyResult
-                    = propertyService.getProperty(null, comment.getId(), "sd.public.comment");
+                    = propertyService.getProperty(applicationUser, comment.getId(), "sd.public.comment");
             EntityProperty entityProperty = propertyResult.getEntityProperty().getOrNull();
             // if the property is not set, we assume it's not internal
             if (entityProperty == null) {
@@ -348,7 +348,7 @@ public class NotificationEventService {
         try {
             CommentPermissionManager permissionManager = ComponentAccessor.getComponent(CommentPermissionManager.class);
             boolean canViewComment = permissionManager.hasBrowsePermission(user, comment);
-            if(isCommentInternal(comment)) {
+            if(isCommentInternal(user, comment)) {
                 return canViewComment &&
                         isUserServiceDeskAgentForIssue(user, comment.getIssue());
             }
