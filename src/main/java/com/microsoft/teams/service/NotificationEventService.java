@@ -111,11 +111,10 @@ public class NotificationEventService {
         }
 
         final NotificationEventUser notificationEventUser = new NotificationEventUser();
-        final String userName = applicationUser.getName();
-        final List<TeamsAtlasUser> teamsAtlasUsers = teamsAtlasUserService.getUserByUserName(userName);
+        final List<TeamsAtlasUser> teamsAtlasUsers = teamsAtlasUserService.getUserByUserName(applicationUser.getKey());
 
         notificationEventUser.setId(applicationUser.getId().toString());
-        notificationEventUser.setName(userName);
+        notificationEventUser.setName(applicationUser.getDisplayName());
         if (!teamsAtlasUsers.isEmpty()) {
             notificationEventUser.setMicrosoftId(teamsAtlasUsers.get(0).getMsTeamsUserId());
             notificationEvent.incrementReceiversCount();
