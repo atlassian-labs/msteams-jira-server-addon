@@ -111,7 +111,7 @@ public class NotificationEventService {
         }
 
         final NotificationEventUser notificationEventUser = new NotificationEventUser();
-        final List<TeamsAtlasUser> teamsAtlasUsers = teamsAtlasUserService.getUserByUserName(applicationUser.getKey());
+        final List<TeamsAtlasUser> teamsAtlasUsers = teamsAtlasUserService.getUserByUserName(applicationUser.getName());
 
         notificationEventUser.setId(applicationUser.getId().toString());
         notificationEventUser.setName(applicationUser.getDisplayName());
@@ -266,7 +266,7 @@ public class NotificationEventService {
                 while (mentionMatcher.find()) {
                     String mention = mentionMatcher.group(1);
 
-                    ApplicationUser mentionedUser = ComponentAccessor.getUserManager().getUserByKey(mention);
+                    ApplicationUser mentionedUser = ComponentAccessor.getUserManager().getUserByName(mention);
                     if (mentionedUser != null) {
                         notificationEventMentions.add(buildNotificationEventUser(mentionedUser, issueEvent));
                     }
