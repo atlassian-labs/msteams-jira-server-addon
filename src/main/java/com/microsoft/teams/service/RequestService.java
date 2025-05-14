@@ -34,6 +34,7 @@ public class RequestService {
 
     private static final String REQUEST_URL_PATTERN = "%s/rest/%s";
     private static final String CONSENT_WAS_REVOKED = "Consent token was revoked";
+    public static final String CONTENT_TYPE = "application/json";
 
     private final PropertiesClient propertiesClient;
     private final AtlasOAuthClient atlasOAuthClient;
@@ -148,7 +149,7 @@ public class RequestService {
             }
             String jsonPayload = gson.toJson(jsonObject);
             // use ByteArrayContent with properly generated Json and escaped characters
-            HttpContent content = new ByteArrayContent("application/json", jsonPayload.getBytes());
+            HttpContent content = new ByteArrayContent(CONTENT_TYPE, jsonPayload.getBytes());
             response = requestFactory.buildPostRequest(new GenericUrl(
                     String.format(REQUEST_URL_PATTERN, hostProperties.getFullBaseUrl(), requestMessage.getRequestUrl())), content)
                     .execute();
@@ -201,7 +202,7 @@ public class RequestService {
             }
             String jsonPayload = gson.toJson(jsonObject);
             // use ByteArrayContent with properly generated Json and escaped characters
-            HttpContent content = new ByteArrayContent("application/json", jsonPayload.getBytes());
+            HttpContent content = new ByteArrayContent(CONTENT_TYPE, jsonPayload.getBytes());
             response = requestFactory.buildPutRequest(new GenericUrl(
                     String.format(REQUEST_URL_PATTERN, hostProperties.getFullBaseUrl(), requestMessage.getRequestUrl())), content)
                     .execute();
@@ -236,7 +237,7 @@ public class RequestService {
         HttpRequestFactory requestFactory = getHttpRequestFactory(requestMessage.getTeamsId());
         try {
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType("application/json");
+            headers.setContentType(CONTENT_TYPE);
 
             HttpRequest request = requestFactory.buildDeleteRequest(new GenericUrl(
                     String.format(REQUEST_URL_PATTERN, hostProperties.getFullBaseUrl(), requestMessage.getRequestUrl())));

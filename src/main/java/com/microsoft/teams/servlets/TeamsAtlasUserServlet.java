@@ -23,7 +23,6 @@ import static com.microsoft.teams.oauth.PropertiesClient.*;
 public class TeamsAtlasUserServlet extends HttpServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(TeamsAtlasUserServlet.class);
-
     private final TeamsAtlasUserService userService;
     private final AppKeysService keysService;
     private final RedirectHelper redirectHelper;
@@ -102,19 +101,20 @@ public class TeamsAtlasUserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
         if (redirectHelper.isUserLoggedInAndAdmin(req, resp)) {
             try {
+                String servletPath = req.getContextPath() + "/plugins/servlet/teams/user/mapping";
                 Map<String, String> properties = new HashMap<>();
                 if ("deleteAll".equals(req.getParameter("method"))) {
                     userService.deleteAll();
-                    resp.sendRedirect(req.getContextPath() + "/plugins/servlet/user/mapping");
+                    resp.sendRedirect(servletPath);
                 } else if ("delete".equals(req.getParameter("method"))) {
                     userService.deleteAoObject(req.getParameter("MsTeamsUserId"));
-                    resp.sendRedirect(req.getContextPath() + "/plugins/servlet/user/mapping");
+                    resp.sendRedirect(servletPath);
                 } else {
                     properties.put(TEAMS_ID, req.getParameter("MsTeamsUserId"));
                     properties.put(ACCESS_TOKEN, req.getParameter("AtlasAccessToken"));
                     userService.add(properties);
 
-                    resp.sendRedirect(req.getContextPath() + "/plugins/servlet/user/mapping");
+                    resp.sendRedirect(servletPath);
                 }
             } catch (IOException e) {
                 LOG.error(e.getMessage());

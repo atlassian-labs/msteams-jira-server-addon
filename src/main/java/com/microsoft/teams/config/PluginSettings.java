@@ -1,6 +1,6 @@
 package com.microsoft.teams.config;
 
-public interface PluginImageSettings {
+public interface PluginSettings {
 
     boolean getEmbedIconsSetting();
 
@@ -13,6 +13,14 @@ public interface PluginImageSettings {
     boolean getEmbedProjectAvatarsSetting();
 
     void setEmbedProjectAvatarsSetting(boolean doEmbedAvatars);
+
+    boolean getPersonalNotificationsSetting();
+
+    void setPersonalNotificationsSetting(boolean doPersonalNotifications);
+
+    boolean getGroupNotificationsSetting();
+
+    void setGroupNotificationsSetting(boolean doGroupNotifications);
 
     boolean hasChanged();
 

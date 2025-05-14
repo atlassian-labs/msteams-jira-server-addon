@@ -1,0 +1,30 @@
+.aui-iconfont-copy-clipboard {
+    cursor: pointer;
+}
+
+.teams-applink-consumer-key {
+    word-break: break-all;
+}
+
+.teams-applink-consumer-table {
+    margin-bottom: 15px !important;
+    margin-top: 15px !important;
+}
+
+.teams-applink-config-image {
+    border: 1px solid #dfe1e6;
+}
+
+.teams-image-settings-cell-key {
+    min-width: 230px !important;
+    max-width: 230px !important;
+}
+
+.teams-image-settings-toggle {
+    min-width: 50px !important;
+    max-width: 50px !important;
+}
+
+.teams-applink-name {
+    padding-left: 15px;
+}

@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:osgi="http://www.springframework.org/schema/osgi"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:atlassian-scanner="http://www.atlassian.com/schema/atlassian-scanner/2"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/osgi
+        http://www.springframework.org/schema/osgi/spring-osgi.xsd
         http://www.atlassian.com/schema/atlassian-scanner/2
         http://www.atlassian.com/schema/atlassian-scanner/2/atlassian-scanner.xsd">
     <atlassian-scanner:scan-indexes/>
+    <osgi:reference id="applicationLinkService" interface="com.atlassian.applinks.api.ApplicationLinkService"/>
+    <osgi:reference id="mutatingApplicationLinkService" interface="com.atlassian.applinks.spi.link.MutatingApplicationLinkService" />
+    <osgi:reference id="applicationLinkTypeAccessor" interface="com.atlassian.applinks.spi.util.TypeAccessor" />
+    <osgi:reference id="serviceProviderConsumerStore" interface="com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore" />
+    <osgi:reference id="serviceProviderTokenStore" interface="com.atlassian.oauth.serviceprovider.ServiceProviderTokenStore"/>
 </beans>

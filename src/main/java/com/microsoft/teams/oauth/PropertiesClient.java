@@ -32,6 +32,11 @@ public class PropertiesClient {
     public static final String SETTINGS_EMBED_ICONS = "settings_embed_icons";
     public static final String SETTINGS_EMBED_AVATARS = "settings_embed_avatars";
     public static final String SETTINGS_EMBED_PROJECT_AVATARS = "settings_embed_project_avatars";
+    public static final String SETTINGS_PERSONAL_NOTIFICATIONS_CONFIGURED = "settings_personal_notifications_configured";
+    public static final String SETTINGS_GROUP_NOTIFICATIONS_CONFIGURED = "settings_group_notifications_configured";
+    public static final String MICROSOFT_TEAMS_INTEGRATION = "MicrosoftTeamsIntegration";
+    public static final String FALSE_VALUE = "false";
+    public static final String TRUE_VALUE = "true";
 
     private static final Map<String, String> DEFAULT_PROPERTY_VALUES = ImmutableMap.<String, String>builder()
             .put(CONSUMER_KEY, CONSUMER_KEY_VALUE)
@@ -43,9 +48,11 @@ public class PropertiesClient {
             .build();
 
     private static final Map<String, String> DEFAULT_SETTINGS = ImmutableMap.<String, String>builder()
-            .put(SETTINGS_EMBED_ICONS, "true")
-            .put(SETTINGS_EMBED_AVATARS, "false")
-            .put(SETTINGS_EMBED_PROJECT_AVATARS, "true")
+            .put(SETTINGS_EMBED_ICONS, TRUE_VALUE)
+            .put(SETTINGS_EMBED_AVATARS, FALSE_VALUE)
+            .put(SETTINGS_EMBED_PROJECT_AVATARS, TRUE_VALUE)
+            .put(SETTINGS_PERSONAL_NOTIFICATIONS_CONFIGURED, FALSE_VALUE)
+            .put(SETTINGS_GROUP_NOTIFICATIONS_CONFIGURED, FALSE_VALUE)
             .build();
 
     private final TeamsAtlasUserService userService;

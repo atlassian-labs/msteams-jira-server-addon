@@ -10,14 +10,14 @@ import java.util.Map;
 import static com.microsoft.teams.oauth.PropertiesClient.*;
 
 @Component
-public class PluginImageSettingsImpl implements PluginImageSettings{
+public class PluginSettingsImpl implements PluginSettings {
 
     private final AppSettingsService appSettingsService;
 
     private boolean hasSettingChanged = false;
 
     @Autowired
-    public PluginImageSettingsImpl(AppSettingsService appSettingsService) {
+    public PluginSettingsImpl(AppSettingsService appSettingsService) {
         this.appSettingsService = appSettingsService;
     }
 
@@ -68,6 +68,42 @@ public class PluginImageSettingsImpl implements PluginImageSettings{
         if (this.getEmbedProjectAvatarsSetting() != doEmbedProjectAvatars) {
             HashMap<String, String> settings = new HashMap<>();
             settings.put(SETTINGS_EMBED_PROJECT_AVATARS, Boolean.toString(doEmbedProjectAvatars));
+
+            this.appSettingsService.set(settings);
+
+            hasSettingChanged = true;
+        }
+    }
+
+    @Override
+    public boolean getPersonalNotificationsSetting() {
+        Map<String, String> settings  = this.appSettingsService.get();
+        return Boolean.parseBoolean(settings.get(SETTINGS_PERSONAL_NOTIFICATIONS_CONFIGURED));
+    }
+
+    @Override
+    public void setPersonalNotificationsSetting(boolean doPersonalNotifications) {
+        if (this.getPersonalNotificationsSetting() != doPersonalNotifications) {
+            HashMap<String, String> settings = new HashMap<>();
+            settings.put(SETTINGS_PERSONAL_NOTIFICATIONS_CONFIGURED, Boolean.toString(doPersonalNotifications));
+
+            this.appSettingsService.set(settings);
+
+            hasSettingChanged = true;
+        }
+    }
+
+    @Override
+    public boolean getGroupNotificationsSetting() {
+        Map<String, String> settings  = this.appSettingsService.get();
+        return Boolean.parseBoolean(settings.get(SETTINGS_GROUP_NOTIFICATIONS_CONFIGURED));
+    }
+
+    @Override
+    public void setGroupNotificationsSetting(boolean doGroupNotifications) {
+        if (this.getGroupNotificationsSetting() != doGroupNotifications) {
+            HashMap<String, String> settings = new HashMap<>();
+            settings.put(SETTINGS_GROUP_NOTIFICATIONS_CONFIGURED, Boolean.toString(doGroupNotifications));
 
             this.appSettingsService.set(settings);
 

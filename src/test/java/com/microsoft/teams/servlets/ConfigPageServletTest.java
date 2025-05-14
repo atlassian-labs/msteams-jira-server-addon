@@ -3,11 +3,8 @@ package com.microsoft.teams.servlets;
 import com.atlassian.jira.mock.component.MockComponentWorker;
 import com.atlassian.jira.security.xsrf.XsrfTokenGenerator;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import com.microsoft.teams.config.PluginImageSettings;
-import com.microsoft.teams.service.AppPropertiesService;
-import com.microsoft.teams.service.HostPropertiesService;
-import com.microsoft.teams.service.KeysService;
-import com.microsoft.teams.service.SignalRService;
+import com.microsoft.teams.config.PluginSettings;
+import com.microsoft.teams.service.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,13 +38,15 @@ public class ConfigPageServletTest {
     @Mock
     HostPropertiesService hostProperties;
     @Mock
-    PluginImageSettings pluginImageSettings;
+    PluginSettings pluginSettings;
     @Mock
     HttpServletRequest request;
     @Mock
     HttpServletResponse response;
     @Mock
     XsrfTokenGenerator xsrfTokenGenerator;
+    @Mock
+    ApplicationLinkCreatorService applicationLinkCreatorService;
     ConfigPageServlet configPageServlet;
 
     private static final String EMBED_ICONS = "embed-icons";
@@ -61,7 +60,7 @@ public class ConfigPageServletTest {
         MockitoAnnotations.initMocks(this);
         MockComponentWorker mockComponentWorker = new MockComponentWorker();
         mockComponentWorker.addMock(TemplateRenderer.class, renderer).addMock(XsrfTokenGenerator.class, xsrfTokenGenerator).init();
-        configPageServlet = new ConfigPageServlet(renderer, redirectHelper, signalRService, appProperties, keysService, hostProperties, pluginImageSettings);
+        configPageServlet = new ConfigPageServlet(renderer, redirectHelper, signalRService, appProperties, keysService, hostProperties, pluginSettings, applicationLinkCreatorService);
     }
 
     @Test
@@ -81,12 +80,12 @@ public class ConfigPageServletTest {
 
         given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_ICONS)).willReturn("embed_icons");
-        given(pluginImageSettings.getEmbedIconsSetting()).willReturn(false);
+        given(pluginSettings.getEmbedIconsSetting()).willReturn(false);
         given(request.getCookies()).willReturn(new Cookie[]{cookie});
 
         configPageServlet.doPost(request, response);
 
-        verify(pluginImageSettings).setEmbedIconsSetting(true);
+        verify(pluginSettings).setEmbedIconsSetting(true);
     }
 
     @Test
@@ -95,12 +94,12 @@ public class ConfigPageServletTest {
 
         given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_ICONS)).willReturn(null);
-        given(pluginImageSettings.getEmbedIconsSetting()).willReturn(true);
+        given(pluginSettings.getEmbedIconsSetting()).willReturn(true);
         given(request.getCookies()).willReturn(new Cookie[]{cookie});
 
         configPageServlet.doPost(request, response);
 
-        verify(pluginImageSettings).setEmbedIconsSetting(false);
+        verify(pluginSettings).setEmbedIconsSetting(false);
     }
 
     @Test
@@ -109,12 +108,12 @@ public class ConfigPageServletTest {
 
         given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_AVATARS)).willReturn("embed_avatars");
-        given(pluginImageSettings.getEmbedAvatarsSetting()).willReturn(false);
+        given(pluginSettings.getEmbedAvatarsSetting()).willReturn(false);
         given(request.getCookies()).willReturn(new Cookie[]{cookie});
 
         configPageServlet.doPost(request, response);
 
-        verify(pluginImageSettings).setEmbedAvatarsSetting(true);
+        verify(pluginSettings).setEmbedAvatarsSetting(true);
     }
 
     @Test
@@ -123,12 +122,12 @@ public class ConfigPageServletTest {
 
         given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_AVATARS)).willReturn(null);
-        given(pluginImageSettings.getEmbedAvatarsSetting()).willReturn(true);
+        given(pluginSettings.getEmbedAvatarsSetting()).willReturn(true);
         given(request.getCookies()).willReturn(new Cookie[]{cookie});
 
         configPageServlet.doPost(request, response);
 
-        verify(pluginImageSettings).setEmbedAvatarsSetting(false);
+        verify(pluginSettings).setEmbedAvatarsSetting(false);
     }
 
     @Test
@@ -137,12 +136,12 @@ public class ConfigPageServletTest {
 
         given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_PROJECT_AVATARS)).willReturn("embed_project_avatars");
-        given(pluginImageSettings.getEmbedProjectAvatarsSetting()).willReturn(false);
+        given(pluginSettings.getEmbedProjectAvatarsSetting()).willReturn(false);
         given(request.getCookies()).willReturn(new Cookie[]{cookie});
 
         configPageServlet.doPost(request, response);
 
-        verify(pluginImageSettings).setEmbedProjectAvatarsSetting(true);
+        verify(pluginSettings).setEmbedProjectAvatarsSetting(true);
     }
 
     @Test
@@ -151,11 +150,11 @@ public class ConfigPageServletTest {
 
         given(request.getParameter(ATL_TOKEN)).willReturn(cookie.getName());
         given(request.getParameter(EMBED_PROJECT_AVATARS)).willReturn(null);
-        given(pluginImageSettings.getEmbedProjectAvatarsSetting()).willReturn(true);
+        given(pluginSettings.getEmbedProjectAvatarsSetting()).willReturn(true);
         given(request.getCookies()).willReturn(new Cookie[]{cookie});
 
         configPageServlet.doPost(request, response);
 
-        verify(pluginImageSettings).setEmbedProjectAvatarsSetting(false);
+        verify(pluginSettings).setEmbedProjectAvatarsSetting(false);
     }
 }

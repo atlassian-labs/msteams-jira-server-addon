@@ -3,108 +3,243 @@
 <head>
     <title>$i18n.getText("config-panel.title")</title>
     <meta name="decorator" content="atl.admin">
+    $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+    $webResourceManager.requireResource("com.atlassian.auiplugin:dialog2")
+    $webResourceManager.requireResource("com.atlassian.auiplugin:aui-toggle")
+    $webResourceManager.requireResource("com.microsoft.teams.$pluginKey:integration-resources")
 </head>
 <body>
 <form id="admin" class="aui">
-    <div class="field-group">
-        <h2>$i18n.getText("config-panel.greeting")</h2>
+    <div>
+        <h2>Microsoft Teams for Jira Data Center configuration</h2>
     </div>
-    <div class="field-group">
-        <ul>
-            <li>$i18n.getText("config-panel.application-link.step1.1")
-                <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/administration_icon.png" alt="administration" style="height: 15px;" title="Administration">
-                $i18n.getText("config-panel.application-link.step1.2")</li>
-            <li>$i18n.getText("config-panel.application-link.step2")</li>
-            <li>$i18n.getText("config-panel.application-link.step3")</li>
-            <li>$i18n.getText("config-panel.application-link.step4")</li>
-            <li>$i18n.getText("config-panel.application-link.step5")</li>
-            <li>
-                <p>$i18n.getText("config-panel.application-link.step6")</p>
-                <p>
-                    <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/oauth-applink1.png"
-                         width="400" )>
-                </p>
-            </li>
-            <li>$i18n.getText("config-panel.application-link.step7")</li>
-            <ul>
-                <li>Consumer key = <strong id="consumerKey">$consumerKey</strong>
-                    <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/copy-to-clipboard.png" alt="copy" style="height: 15px;cursor: pointer;" onclick="CopyToClipboard('#consumerKey')" title="Copy to clipboard"></li>
-                <li>Consumer name = <strong id="consumerName">$consumerName</strong>
-                    <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/copy-to-clipboard.png" alt="copy" style="height: 15px;cursor: pointer;" onclick="CopyToClipboard('#consumerName')" title="Copy to clipboard"></li>
-                <li>Public key =
-                    <div style="display: flex;">
-                        <div style="width: 300px; padding: 10px; border: 1px solid grey; word-wrap: break-word;" id="publicKey">$publicKey</div>
-                        <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/copy-to-clipboard.png" alt="copy" style="height: 15px;cursor: pointer;" onclick="CopyToClipboard('#publicKey')" title="Copy to clipboard">
-                    </div>
-                </li>
-            </ul>
-            <li>
-                <p>$i18n.getText("config-panel.application-link.step8")</p>
-                <p>
-                    <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/oauth-applink2.png"
-                         width="850">
-                </p>
-            </li>
-            <li>$i18n.getText("config-panel.application-link.step9")</li>
-            <li>$i18n.getText("config-panel.application-link.step10")<strong id="atlasId">$atlasId</strong>
-                <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/copy-to-clipboard.png" alt="" style="height: 15px;cursor: pointer;" onclick="CopyToClipboard('#atlasId')" title="Copy to clipboard">
-                <p>
-                    <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/teams-auth-jira-id.png"
-                         width="286">
-                </p>
-            </li>
-
-        </ul>
-    </div>
-    <div class="field-group">
-        <h4>$i18n.getText("config-panel.connection-state")
-            #if($isConnectionActive)
-                <font color="green">ACTIVE</font>&emsp;
-            #else
-                <font color="red">INACTIVE</font>&emsp;
-            #end
-            <button onclick="location.href = '$atlasHome/plugins/servlet/signalr/reconnect'" id="reconnect-button" type="button">Reconnect</button>
-        </h4>
-
+    <div class="module toggle-wrap twixi-block expanded">
+        <div class="mod-content">
+            <table class="aui aui-table-rowhover">
+                <caption><strong>$i18n.getText("config-panel.application-info.title")</strong></caption>
+                <tbody>
+                    <tr>
+                        <td class="cell-type-key" width="20%">
+                            <strong>$i18n.getText("config-panel.application-info.connection-status-row")</strong>
+                        </td>
+                        <td class="cell-type-value" width="55%">
+                            #if($isConnectionActive)
+                                <span class="aui-lozenge aui-lozenge-success">$i18n.getText("config-panel.application-info.connection-status-active")</span>
+                            #else
+                                <span class="aui-lozenge aui-lozenge-error">$i18n.getText("config-panel.application-info.connection-status-inactive")</span>
+                            #end
+                        </td>
+                        <td class="cell-type-value" width="25%">
+                            <button onclick="location.href='$atlasHome/plugins/servlet/teams/signalr/reconnect'" id="reconnect-button" type="button" class="aui-button aui-button-link">$i18n.getText("config-panel.application-info.connection-reconnect-button")</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="cell-type-key">
+                            <strong>$i18n.getText("config-panel.application-info.applink-status-row")</strong>
+                        </td>
+                        <td class="cell-type-value">
+                            #if($isApplicationLinkCreated)
+                                $applicationLinkName
+                            #else
+                                <div class="aui-message aui-message-warning warning" style="max-width: 800px">
+                                    <p>$i18n.getText("config-panel.application-info.applink-value1") <button id="applink-dialog-show-button" class="aui-button aui-button-link">$i18n.getText("config-panel.application-info.applink-value-link")</button> $i18n.getText("config-panel.application-info.applink-value2")</p>
+                                </div>
+                            #end
+                        </td>
+                        <td class="cell-type-value">
+                            <button onclick="location.href='$atlasHome/plugins/servlet/teams/applink/create'" id="recreatelink-button" type="button" class="aui-button aui-button-link" >
+                                #if($isApplicationLinkCreated)
+                                    $i18n.getText("config-panel.application-info.applink-recreate-button")
+                                #else
+                                    $i18n.getText("config-panel.application-info.applink-create-button")
+                                #end
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="cell-type-key">
+                            <strong>$i18n.getText("config-panel.application-info.jiraid-row")</strong>
+                        </td>
+                        <td class="cell-type-value">
+                            <span id="atlasId">$atlasId</span>
+                            <span class="aui-icon aui-icon-small aui-iconfont-copy-clipboard" onclick="CopyToClipboard('#atlasId')" title="$i18n.getText("config-panel.button.copy-to-clipboard")">$i18n.getText("config-panel.button.copy-to-clipboard")</span>
+                            <div class="aui-message aui-message-info info" style="max-width: 800px">
+                                $i18n.getText("config-panel.application-info.jiraid-configuration")
+                                <p>
+                                    <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/teams-auth-jira-id.png"
+                                         width="400">
+                                </p>
+                            </div>
+                        </td>
+                        <td class="cell-type-value">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </form>
-<form id="settingsForm" action='$atlasHome/plugins/servlet/xproduct/admin' method="post" class="aui" target="targetFrame">
-    <div class="field-group">
-        <h2>$i18n.getText("config-panel.image-setting")</h2>
-            #if($embedIcons)
-                <input style="margin-top: 10px;" type="checkbox" onchange="$('#settingsForm').submit();" name="embed-icons"
-                       checked> $i18n.getText("config-panel.image-setting.embed-icons")
-            #else
-                <input style="margin-top: 10px;" type="checkbox" onchange="$('#settingsForm').submit();" name="embed-icons"> $i18n.getText("config-panel.image-setting.embed-icons")
-            #end
-            <p>$i18n.getText("config-panel.image-setting.embed-icons.description")</p>
-            #if($embedAvatars)
-                <input style="margin-top: 10px;" type="checkbox" onchange="$('#settingsForm').submit();" name="embed-avatars" checked> $i18n.getText("config-panel.image-setting.embed-avatars")
-            #else
-                <input style="margin-top: 10px;" type="checkbox" onchange="$('#settingsForm').submit();" name="embed-avatars"> $i18n.getText("config-panel.image-setting.embed-avatars")
-            #end
-            <p>$i18n.getText("config-panel.image-setting.embed-avatars.description")</p>
-            #if($embedProjectAvatars)
-                <input style="margin-top: 10px;" type="checkbox" onchange="$('#settingsForm').submit();" name="embed-project-avatars" checked> $i18n.getText("config-panel.image-setting.embed-project-avatars")
-            #else
-                <input style="margin-top: 10px;" type="checkbox" onchange="$('#settingsForm').submit();" name="embed-project-avatars"> $i18n.getText("config-panel.image-setting.embed-project-avatars")
-            #end
-            <p>$i18n.getText("config-panel.image-setting.embed-project-avatars.description")</p>
+<form id="settingsForm" action='$atlasHome/plugins/servlet/teams/admin' method="post" class="aui" target="targetFrame">
+    <div class="module toggle-wrap twixi-block expanded">
+        <div class="mod-content">
+            <div class="aui-message aui-message-warning warning">
+                <p>$i18n.getText("config-panel.image-setting.warning")</p>
+            </div>
+            <table class="aui aui-table-rowhover">
+                <caption><strong>$i18n.getText("config-panel.image-settings.title")</strong></caption>
+                <tbody>
+                    <tr>
+                        <td class="cell-type-key teams-image-settings-cell-key" width="15%">
+                            <strong>$i18n.getText("config-panel.image-setting.embed-icons")</strong>
+                        </td>
+                        <td class="cell-type-value teams-image-settings-toggle" width="5%">
+                            #if($embedIcons)
+                                <aui-toggle id="gzip-compression" value="embed-icons" name="embed-icons" onchange="$('#settingsForm').submit();" checked></aui-toggle>
+                            #else
+                                <aui-toggle id="gzip-compression" value="embed-icons" name="embed-icons" onchange="$('#settingsForm').submit();"></aui-toggle>
+                            #end
+                        </td>
+                        <td class="cell-type-value" width="80%">
+                            <p>$i18n.getText("config-panel.image-setting.embed-icons.description")</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="cell-type-key teams-image-settings-cell-key">
+                            <strong>$i18n.getText("config-panel.image-setting.embed-avatars")</strong>
+                        </td>
+                        <td class="cell-type-value teams-image-settings-toggle">
+                            #if($embedAvatars)
+                                <aui-toggle id="gzip-compression" value="embed-avatars" name="embed-avatars" onchange="$('#settingsForm').submit();" checked></aui-toggle>
+                            #else
+                                <aui-toggle id="gzip-compression" value="embed-avatars" name="embed-avatars" onchange="$('#settingsForm').submit();"></aui-toggle>
+                            #end
+                        </td>
+                        <td class="cell-type-value">
+                            <p>$i18n.getText("config-panel.image-setting.embed-avatars.description")</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="cell-type-key teams-image-settings-cell-key">
+                            <strong>$i18n.getText("config-panel.image-setting.embed-project-avatars")</strong>
+                        </td>
+                        <td class="cell-type-value teams-image-settings-toggle">
+                            #if($embedProjectAvatars)
+                                <aui-toggle id="embed-project-avatars" value="embed-project-avatars" name="embed-project-avatars" onchange="$('#settingsForm').submit();" checked></aui-toggle>
+                            #else
+                                <aui-toggle id="embed-project-avatars" value="embed-project-avatars"  name="embed-project-avatars" onchange="$('#settingsForm').submit();"></aui-toggle>
+                            #end
+                        </td>
+                        <td class="cell-type-value">
+                            <p>$i18n.getText("config-panel.image-setting.embed-project-avatars.description")</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
             <input type="hidden" name="atl_token" value="$atl_token">
+            <iframe width="0" height="0" border="0" name="targetFrame" id="targetFrame" style="display: none;"></iframe>
+        </div>
     </div>
 </form>
-<iframe width="0" height="0" border="0" name="targetFrame" id="targetFrame" style="display: none;"></iframe>
-<div class="field-group">
-    <button onclick="location.href = '$atlasHome/plugins/servlet/upm'" id="back-button" type="button">Go Back</button>
+<div class="module toggle-wrap twixi-block expanded">
+    <button onclick="location.href = '$atlasHome/plugins/servlet/upm'" id="back-button" type="button" class="aui-button aui-button-primary">$i18n.getText("config-panel.button.go-back")</button>
 </div>
+<section id="applink-dialog" class="aui-dialog2 aui-dialog2-xlarge aui-layer" role="dialog" aria-hidden="true">
+    <header class="aui-dialog2-header">
+        <h2 class="aui-dialog2-header-main">$i18n.getText("config-panel.application-link.dialog-title")</h2>
+        <a class="aui-dialog2-header-close" id="applink-dialog-close-button">
+            <span class="aui-icon aui-icon-small aui-iconfont-close-dialog">$i18n.getText("config-panel.application-link.dialog-close-button")</span>
+        </a>
+    </header>
+    <div class="aui-dialog2-content">
+        <div class="field-group">
+            <ol>
+                <li>$i18n.getText("config-panel.application-link.step1.1")
+                    <span class="aui-icon aui-icon-small aui-iconfont-configure"></span>
+                    $i18n.getText("config-panel.application-link.step1.2")
+                </li>
+                <li>$i18n.getText("config-panel.application-link.step2")</li>
+                <li>$i18n.getText("config-panel.application-link.step3")</li>
+                <li>$i18n.getText("config-panel.application-link.step4.1")
+                    <strong id="appUrl">$appBaseUrl</strong>
+                    <span class="aui-icon aui-icon-small aui-iconfont-copy-clipboard" onclick="CopyToClipboard('#appUrl')" title="$i18n.getText("config-panel.button.copy-to-clipboard")">$i18n.getText("config-panel.button.copy-to-clipboard")</span>$i18n.getText("config-panel.application-link.step4.2")</li>
+                <li>$i18n.getText("config-panel.application-link.step5")</li>
+                <li>
+                    <p>$i18n.getText("config-panel.application-link.step6.1")
+                        <strong id="applinkName">$applicationLinkName</strong>
+                        <span class="aui-icon aui-icon-small aui-iconfont-copy-clipboard" onclick="CopyToClipboard('#applinkName')" title="$i18n.getText("config-panel.button.copy-to-clipboard")"></span> $i18n.getText("config-panel.application-link.step6.2")</p>
+                    <p>
+                        <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/oauth-applink1.png"
+                             class="teams-applink-config-image"
+                             width="400" )>
+                    </p>
+                </li>
+                <li>$i18n.getText("config-panel.application-link.step7")</li>
+                <table class="aui aui-table-rowhover teams-applink-consumer-table">
+                    <tbody>
+                        <tr>
+                            <td width="20%">
+                                <strong>$i18n.getText("config-panel.application-link.consumer-key")</strong>
+                            </td>
+                            <td width="70%" class="cell-type-value" id="consumerKey">$consumerKey</td>
+                            <td width="10%">
+                                <span class="aui-icon aui-icon-small aui-iconfont-copy-clipboard" onclick="CopyToClipboard('#consumerKey')" title="$i18n.getText("config-panel.button.copy-to-clipboard")">$i18n.getText("config-panel.button.copy-to-clipboard")</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>$i18n.getText("config-panel.application-link.consumer-name")</strong>
+                            </td>
+                            <td class="cell-type-value" id="consumerName">$consumerName</td>
+                            <td>
+                                <span class="aui-icon aui-icon-small aui-iconfont-copy-clipboard" onclick="CopyToClipboard('#consumerName')" title="$i18n.getText("config-panel.button.copy-to-clipboard")">$i18n.getText("config-panel.button.copy-to-clipboard")</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>$i18n.getText("config-panel.application-link.public-key")</strong>
+                            </td>
+                            <td class="cell-type-value teams-applink-consumer-key " id="publicKey">$publicKey</td>
+                            <td>
+                                <span class="aui-icon aui-icon-small aui-iconfont-copy-clipboard" onclick="CopyToClipboard('#publicKey')" title="$i18n.getText("config-panel.button.copy-to-clipboard")">$i18n.getText("config-panel.button.copy-to-clipboard")</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <li>
+                    <p>$i18n.getText("config-panel.application-link.step8")</p>
+                    <p>
+                        <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/oauth-applink2.png" width="850"
+                             class="teams-applink-config-image">
+                    </p>
+                </li>
+                <li>$i18n.getText("config-panel.application-link.step9")</li>
+            </ol>
+        </div>
+    </div>
+    <footer class="aui-dialog2-footer">
+        <div class="aui-dialog2-footer-actions">
+            <button id="applink-dialog-submit-button" class="aui-button aui-button-primary">$i18n.getText("config-panel.application-link.dialog-close-button")</button>
+        </div>
+    </footer>
+</section>
 <script>
-    function CopyToClipboard(element) {
-        let temp = $("<input>");
-        $("body").append(temp);
-        temp.val($(element).text()).select();
-        document.execCommand("copy");
-        temp.remove();
-        }
+    AJS.$("#applink-dialog-show-button").click(function(e) {
+        e.preventDefault();
+        AJS.dialog2("#applink-dialog").show();
+    });
+
+    // Hides the dialog
+    AJS.$("#applink-dialog-submit-button").click(function (e) {
+        e.preventDefault();
+        AJS.dialog2("#applink-dialog").hide();
+    });
+
+    AJS.$("#applink-dialog-close-button").click(function (e) {
+        e.preventDefault();
+        AJS.dialog2("#applink-dialog").hide();
+    });
 </script>
+<link rel="stylesheet" href="$atlasHome/download/resources/$pluginKey:integration-resources/integration.css">
+<script type="text/javascript" src="$atlasHome/download/resources/$pluginKey:integration-resources/integration.js"></script>
 </body>
 </html>

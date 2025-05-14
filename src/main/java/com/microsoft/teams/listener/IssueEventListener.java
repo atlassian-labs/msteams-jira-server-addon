@@ -6,9 +6,9 @@ import com.atlassian.jira.event.issue.IssueEvent;
 import com.atlassian.jira.event.type.EventType;
 import com.atlassian.plugin.spring.scanner.annotation.imports.JiraImport;
 import com.google.common.collect.ImmutableList;
-import com.microsoft.teams.service.AppKeysService;
-import com.microsoft.teams.service.AppPropertiesService;
-import com.microsoft.teams.service.TeamsAtlasUserService;
+import com.microsoft.teams.config.PluginSettings;
+import com.microsoft.teams.listener.queue.IssueEventConsumer;
+import com.microsoft.teams.service.NotificationEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -29,26 +29,33 @@ public class IssueEventListener implements InitializingBean, DisposableBean {
 
     private final List<Long> eventTypes = ImmutableList.of(
             EventType.ISSUE_ASSIGNED_ID,
-            EventType.ISSUE_GENERICEVENT_ID,
             EventType.ISSUE_COMMENTED_ID,
-            EventType.ISSUE_UPDATED_ID);
+            EventType.ISSUE_COMMENT_EDITED_ID,
+            EventType.ISSUE_COMMENT_DELETED_ID,
+            EventType.ISSUE_UPDATED_ID,
+            EventType.ISSUE_RESOLVED_ID,
+            EventType.ISSUE_CLOSED_ID,
+            EventType.ISSUE_REOPENED_ID,
+            EventType.ISSUE_WORKLOGGED_ID,
+            EventType.ISSUE_WORKSTARTED_ID,
+            EventType.ISSUE_WORKSTOPPED_ID,
+            EventType.ISSUE_WORKLOG_UPDATED_ID,
+            EventType.ISSUE_WORKLOG_DELETED_ID,
+            EventType.ISSUE_GENERICEVENT_ID,
+            EventType.ISSUE_CREATED_ID);
     private final Queue<IssueEvent> queue = new ConcurrentLinkedQueue<IssueEvent>();
-    private final TeamsAtlasUserService teamsAtlasUserService;
-    private final AppKeysService appKeysService;
-    private final AppPropertiesService appProperties;
+    private final NotificationEventService notificationEventService;
+    private final PluginSettings pluginSettings;
 
     @JiraImport
     private final EventPublisher eventPublisher;
 
     @Autowired
     public IssueEventListener(EventPublisher eventPublisher,
-                              TeamsAtlasUserService teamsAtlasUserService,
-                              AppKeysService appKeysService,
-                              AppPropertiesService appProperties) {
+                              NotificationEventService notificationEventService, PluginSettings pluginSettings) {
         this.eventPublisher = eventPublisher;
-        this.teamsAtlasUserService = teamsAtlasUserService;
-        this.appKeysService = appKeysService;
-        this.appProperties = appProperties;
+        this.notificationEventService = notificationEventService;
+        this.pluginSettings = pluginSettings;
     }
 
     /**
@@ -57,13 +64,10 @@ public class IssueEventListener implements InitializingBean, DisposableBean {
     @Override
     public void afterPropertiesSet() {
         try {
-            // Uncomment this part of the code if you want to listen to Jira events
-            /*
             eventPublisher.register(this);
-            IssueEventConsumer issueEventConsumer = new IssueEventConsumer(queue, teamsAtlasUserService, appKeysService, appProperties);
+            IssueEventConsumer issueEventConsumer = new IssueEventConsumer(queue, notificationEventService);
             issueEventConsumer.consume();
             LOG.info("afterPropertiesSet() info: Issue event listener has been successfully registered and started");
-            */
         } catch (Exception e) {
             exceptionLogExtender("afterPropertiesSet() error ", Level.ERROR, e);
         }
@@ -74,18 +78,19 @@ public class IssueEventListener implements InitializingBean, DisposableBean {
      */
     @Override
     public void destroy() {
-        // Uncomment this part of the code if you want to listen to Jira events
-        /*
-        LOG.info("Disabling plugin");
+        LOG.info("Disabling IssueEventListener plugin");
         eventPublisher.unregister(this);
-         */
     }
 
     @EventListener
     public void onIssueEvent(IssueEvent issueEvent) {
-        if (eventTypes.contains(issueEvent.getEventTypeId())) {
-            LOG.trace("Event {} added to queue.", issueEvent.getEventTypeId());
+        boolean areNotificationsEnabled = pluginSettings.getPersonalNotificationsSetting()
+                || pluginSettings.getGroupNotificationsSetting() ;
+        if (eventTypes.contains(issueEvent.getEventTypeId()) && areNotificationsEnabled) {
+            LOG.trace("Event type {} added to queue.", issueEvent.getEventTypeId());
             queue.add(issueEvent);
+        } else {
+            LOG.trace("Not supported event type: {} or notifications are disabled for the plugin", issueEvent.getEventTypeId());
         }
     }
 }

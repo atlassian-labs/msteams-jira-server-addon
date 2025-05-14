@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>$i18n.getText("auth-end-page.title")</title>
+    $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+    $webResourceManager.requireResource("com.atlassian.auiplugin:aui-page-typography")
+    <link rel="stylesheet" href="$atlasHome/download/resources/$pluginKey:integration-resources/authEnd.css">
+</head>
+
+<body>
+<div class="container">
+    <img src="$atlasHome/download/resources/$pluginKey:integration-resources/images/atlassian-logo.png" class="logo" alt="Atlassian">
+    <div class="verification-container">
+        <h2>$i18n.getText("auth-end-page.greeting", $username)</h2>
+        <p>$i18n.getText("auth-end-page.your-verification-code")</p>
+        <h1>$oauthVerifier</h1>
+        <p>$i18n.getText("auth-end-page.instruction")</p>
+        <button class="copy-button" onclick="copyToClipboard()">Copy</button>
+    </div>
+</div>
+
+<script>
+    function copyToClipboard() {
+        const textToCopy = "$oauthVerifier";
+        navigator.clipboard.writeText(textToCopy).catch(err => {
+            console.error('Could not copy text: ', err);
+        });
+    }
+</script>
+</body>
+</html>
