@@ -75,7 +75,7 @@
         <dependency>
             <groupId>com.atlassian.httpclient</groupId>
             <artifactId>atlassian-httpclient-plugin</artifactId>
-            <version>1.0.1</version>
+            <version>5.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.atlassian.scheduler</groupId>
