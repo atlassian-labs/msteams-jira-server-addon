@@ -1,12 +1,13 @@
 package com.microsoft.teams.service.messaging;
 
-import com.atlassian.jira.util.BuildUtilsInfo;
 
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.function.Predicate;
+
+import com.atlassian.jira.util.BuildUtilsInfo;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;

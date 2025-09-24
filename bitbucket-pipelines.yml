@@ -1,5 +1,5 @@
 #  Pipeline for building and publishing msteams-jira-addon project
-image: atlassian/default-image:4
+image: atlassian/default-image:5
 
 options:
   docker: true
@@ -18,16 +18,18 @@ definitions:
         script:
           - pipe: atlassian/artifactory-sidekick:v1
           - source .artifactory/activate.sh
-          - export IMG_TAG=docker.atl-paas.net/atlassian/netrunners/ubuntu-pwsh-mvn
+          - export IMG_TAG=docker.atl-paas.net/atlassian/netrunners/ubuntu-pwsh-mvn-jdk21
           - docker build --tag="$IMG_TAG" --file docker/Dockerfile .
           - docker push "$IMG_TAG"
     - step: &buildAndPack
         name: Build package
         image:
-          name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn
+          name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn-jdk21
           username: netrunners
           password: $PIPELINES_JWT_TOKEN
         script:
+          - pipe: atlassian/artifactory-sidekick:v1
+          - source .artifactory/activate.sh
           - |
             PACKAGE_VERSION=$(date +%Y.%m.%d)
             if [[ $BITBUCKET_BRANCH == *"release"* ]]; then
@@ -62,11 +64,12 @@ definitions:
     - step: &buildAndTest
         name: Build & test
         image:
-          name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn
+          name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn-jdk21
           username: netrunners
           password: $PIPELINES_JWT_TOKEN
         script:
-          # Build package and run tests
+          - pipe: atlassian/artifactory-sidekick:v1
+          - source .artifactory/activate.sh
           - atlas-mvn test
     - step: &createTag
         name: Create tag
@@ -78,7 +81,7 @@ definitions:
     - step: &snyk-scan
         name: Run Snyk scan
         image:
-          name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn
+          name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn-jdk21
           username: netrunners
           password: $PIPELINES_JWT_TOKEN
         script:
@@ -102,10 +105,12 @@ definitions:
     - step: &staticAnalysis
         name: SonarQube analysis
         image:
-          name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn
+          name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn-jdk21
           username: netrunners
           password: $PIPELINES_JWT_TOKEN
         script:
+          - pipe: atlassian/artifactory-sidekick:v1
+          - source .artifactory/activate.sh
           - atlas-mvn verify sonar:sonar -Dsonar.projectKey=msteams-jira-onprem-addon -Pcoverage
           - sleep 30 # wait for Sonar Quality Gate to process the results
           - |
@@ -118,7 +123,7 @@ definitions:
     - step: &uploadToMarketplace
         name: Upload new version to Marketplace
         image:
-          name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn
+          name: docker-proxy.services.atlassian.com/atlassian/netrunners/ubuntu-pwsh-mvn-jdk21
           username: netrunners
           password: $PIPELINES_JWT_TOKEN
         script:
@@ -149,7 +154,7 @@ definitions:
             fi
           - sleep 60
           - buildName=$(echo "$BITBUCKET_BRANCH" | sed 's/release\///')
-          - buildNumber=$(echo "$VERSION" | tr -d '.')00
+          - buildNumber=$(echo "$VERSION" | tr -d '.')01
           - |
             curl --request POST \
                  --url 'https://marketplace.atlassian.com/rest/2/addons/microsoft-teams/versions' \
@@ -190,11 +195,11 @@ definitions:
 pipelines:
   default:
     - step:
-          <<: *dockerImage
-          condition:
-            changesets:
-              includePaths:
-                - 'docker/**'
+        <<: *dockerImage
+        condition:
+          changesets:
+            includePaths:
+              - 'docker/**'
     - step: *buildAndTest
     - step: *staticAnalysis
   custom:

@@ -10,7 +10,7 @@ import com.microsoft.teams.oauth.PropertiesClient;
 import com.microsoft.teams.service.models.RequestMessage;
 import com.microsoft.teams.service.models.ResponseMessage;
 import com.microsoft.teams.utils.*;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
