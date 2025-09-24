@@ -23,9 +23,9 @@ import static com.microsoft.teams.oauth.PropertiesClient.*;
 public class TeamsAtlasUserServlet extends HttpServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(TeamsAtlasUserServlet.class);
-    private final TeamsAtlasUserService userService;
-    private final AppKeysService keysService;
-    private final RedirectHelper redirectHelper;
+    private final transient TeamsAtlasUserService userService;
+    private final transient AppKeysService keysService;
+    private final transient RedirectHelper redirectHelper;
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     public TeamsAtlasUserServlet(TeamsAtlasUserService userService,

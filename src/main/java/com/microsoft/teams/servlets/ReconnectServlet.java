@@ -16,8 +16,8 @@ import java.io.IOException;
 public class ReconnectServlet extends HttpServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReconnectServlet.class);
-    private final SignalRService signalRService;
-    private final RedirectHelper redirectHelper;
+    private final transient SignalRService signalRService;
+    private final transient RedirectHelper redirectHelper;
 
     @Autowired
     public ReconnectServlet(SignalRService signalRService, RedirectHelper redirectHelper) {

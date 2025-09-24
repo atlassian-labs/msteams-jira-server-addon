@@ -17,7 +17,7 @@ import java.io.PrintWriter;
 public class JiraServerIdServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(JiraServerIdServlet.class);
 
-    private final KeysService keysService;
+    private final transient KeysService keysService;
 
     @Autowired
     public JiraServerIdServlet(KeysService keysService) {

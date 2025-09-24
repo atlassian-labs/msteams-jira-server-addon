@@ -35,14 +35,14 @@ public class ConfigPageServlet extends HttpServlet {
     private static final String PLUGIN_XSRF_TOKEN = "plugin.xsrf.token";
     private static final String ATL_TOKEN = "atl_token";
 
-    private final TemplateRenderer renderer;
-    private final RedirectHelper redirectHelper;
-    private final SignalRService signalRService;
-    private final AppPropertiesService appProperties;
-    private final KeysService keysService;
-    private final HostPropertiesService hostProperties;
-    private final PluginSettings pluginSettings;
-    private final ApplicationLinkCreatorService applicationLinkCreatorService;
+    private final transient TemplateRenderer renderer;
+    private final transient RedirectHelper redirectHelper;
+    private final transient SignalRService signalRService;
+    private final transient AppPropertiesService appProperties;
+    private final transient KeysService keysService;
+    private final transient HostPropertiesService hostProperties;
+    private final transient PluginSettings pluginSettings;
+    private final transient ApplicationLinkCreatorService applicationLinkCreatorService;
 
     @Autowired
     public ConfigPageServlet(@ComponentImport TemplateRenderer renderer,

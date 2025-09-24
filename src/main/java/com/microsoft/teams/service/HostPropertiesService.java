@@ -1,6 +1,7 @@
 package com.microsoft.teams.service;
 
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
 import org.springframework.stereotype.Component;
 
 import java.util.regex.Matcher;
@@ -16,7 +17,7 @@ public class HostPropertiesService {
     private static final Pattern pathPattern = Pattern.compile("(?<!\\/)\\/(?!\\/).*");
 
     public void setApplicationProperties(ApplicationProperties applicationProperties) {
-        fullBaseUrl = applicationProperties.getBaseUrl();
+        fullBaseUrl = applicationProperties.getBaseUrl(UrlMode.AUTO);
         Matcher matcher = pathPattern.matcher(fullBaseUrl);
         contextPath = matcher.find() ? matcher.group() : "";
         displayName = applicationProperties.getDisplayName();

@@ -16,9 +16,9 @@ import java.io.IOException;
 @Component
 public class CreateAppLinkServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(CreateAppLinkServlet.class);
-    private final ApplicationLinkCreatorService applicationLinkCreatorService;
-    private final PropertiesClient propertiesClient;
-    private final RedirectHelper redirectHelper;
+    private final transient ApplicationLinkCreatorService applicationLinkCreatorService;
+    private final transient PropertiesClient propertiesClient;
+    private final transient RedirectHelper redirectHelper;
     @Autowired
     public CreateAppLinkServlet(ApplicationLinkCreatorService applicationLinkCreatorService, PropertiesClient propertiesClient, RedirectHelper redirectHelper) {
         this.applicationLinkCreatorService = applicationLinkCreatorService;

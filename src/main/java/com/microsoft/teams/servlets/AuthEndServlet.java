@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 public class AuthEndServlet extends HttpServlet {
@@ -27,11 +28,11 @@ public class AuthEndServlet extends HttpServlet {
 
     private static final String PLUGIN_XSRF_TOKEN = "plugin.xsrf.token";
 
-    private final RedirectHelper redirectHelper;
-    private final TemplateRenderer renderer;
-    private final HostPropertiesService hostProperties;
-    private final AppPropertiesService appProperties;
-    private final UserManager userManager;
+    private final transient RedirectHelper redirectHelper;
+    private final transient TemplateRenderer renderer;
+    private final transient HostPropertiesService hostProperties;
+    private final transient AppPropertiesService appProperties;
+    private final transient UserManager userManager;
 
     @Autowired
     public AuthEndServlet(@ComponentImport TemplateRenderer renderer,
@@ -58,7 +59,7 @@ public class AuthEndServlet extends HttpServlet {
                 parameters.put("oauthVerifier", oauthVerifier);
                 parameters.put("atlasHome", hostProperties.getFullBaseUrl());
                 parameters.put("pluginKey", appProperties.getPluginKey());
-                parameters.put("username", userManager.getRemoteUsername(request));
+                parameters.put("username", Objects.requireNonNull(userManager.getRemoteUser(request)).getUsername());
                 response.addCookie(new Cookie(PLUGIN_XSRF_TOKEN, token));
 
                 renderer.render("templates/authEnd.vm", parameters, response.getWriter());
