@@ -486,20 +486,24 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
     <properties>
+        <jdkLevel>21</jdkLevel>
+        <maven.compiler.source>${jdkLevel}</maven.compiler.source>
+        <maven.compiler.target>${jdkLevel}</maven.compiler.target>
+
         <platform.version>5.0.11</platform.version>
         <refapp.version>8.0.2</refapp.version>
         <amps.version>8.0.2</amps.version>
         <plugin.testrunner.version>2.0.1</plugin.testrunner.version>
         <atlassian.spring.scanner.version>2.1.7</atlassian.spring.scanner.version>
-        <jira.version>11.1.0-QR-20250721150102</jira.version>
+        <jira.version>11.0.0</jira.version>
         <!-- This property ensures consistency between the key in atlassian-plugin.xml and the OSGi bundle's key. -->
         <atlassian.plugin.key>${project.artifactId}</atlassian.plugin.key>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
