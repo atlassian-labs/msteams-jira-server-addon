@@ -49,6 +49,10 @@
             <name>maven-central-snapshot</name>
             <url>https://packages.atlassian.com/maven-external/</url>
         </repository>
+        <repository>
+            <id>repo.jenkins-ci.org</id>
+            <url>https://repo.jenkins-ci.org/public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -57,7 +61,7 @@
         <dependency>
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-api</artifactId>
-            <version>2.7.0</version>
+            <version>7.0.0-jakarta-001</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -69,7 +73,7 @@
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-api</artifactId>
-            <version>4.5.1</version>
+            <version>9.0.0-jakarta-m007</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -179,7 +183,7 @@
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
-            <version>9.37.3</version>
+            <version>10.0.2</version>
         </dependency>
 
         <!--Spring-->
@@ -190,9 +194,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <version>1</version>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+            <version>2.0.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -249,11 +253,10 @@
             <artifactId>guava</artifactId>
             <version>32.0.0-jre</version>
         </dependency>
-
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>2.18.3</version>
+            <version>4.11.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -293,26 +296,26 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.10</version>
+            <version>3.18.0</version>
         </dependency>
 
         <!--Web-->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.0.1</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>5.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>jsr311-api</artifactId>
-            <version>1.1.1</version>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.8.9</version>
+            <version>2.10.1</version>
         </dependency>
         <dependency>
             <groupId>com.microsoft.signalr</groupId>
@@ -457,7 +460,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.11</version>
+                <version>0.8.13</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -483,22 +486,32 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
     <properties>
+        <jdkLevel>21</jdkLevel>
+        <maven.compiler.source>${jdkLevel}</maven.compiler.source>
+        <maven.compiler.target>${jdkLevel}</maven.compiler.target>
+
         <platform.version>5.0.11</platform.version>
         <refapp.version>8.0.2</refapp.version>
         <amps.version>8.0.2</amps.version>
         <plugin.testrunner.version>2.0.1</plugin.testrunner.version>
         <atlassian.spring.scanner.version>2.1.7</atlassian.spring.scanner.version>
-        <jira.version>9.0.1-QR-20220512231533</jira.version>
+        <jira.version>11.0.0</jira.version>
         <!-- This property ensures consistency between the key in atlassian-plugin.xml and the OSGi bundle's key. -->
         <atlassian.plugin.key>${project.artifactId}</atlassian.plugin.key>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <spring.version>5.3.20</spring.version>
+        <spring.version>5.3.39</spring.version>
     </properties>
 
 </project>

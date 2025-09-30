@@ -1,6 +1,7 @@
 package com.microsoft.teams.service;
 
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -24,7 +25,7 @@ public class HostPropertiesServiceTest {
     @Test
     public void getBaseUrl() {
         hostPropertiesService = new HostPropertiesService();
-        when(applicationProperties.getBaseUrl()).thenReturn(baseUrl);
+        when(applicationProperties.getBaseUrl(UrlMode.AUTO)).thenReturn(baseUrl);
         when(applicationProperties.getDisplayName()).thenReturn(displayName);
         hostPropertiesService.setApplicationProperties(applicationProperties);
 
@@ -38,7 +39,7 @@ public class HostPropertiesServiceTest {
     @Test
     public void getFullBaseUrl() {
         hostPropertiesService = new HostPropertiesService();
-        when(applicationProperties.getBaseUrl()).thenReturn("http://atlassian");
+        when(applicationProperties.getBaseUrl(UrlMode.AUTO)).thenReturn("http://atlassian");
         when(applicationProperties.getDisplayName()).thenReturn(displayName);
         hostPropertiesService.setApplicationProperties(applicationProperties);
 

@@ -7,8 +7,8 @@ import com.microsoft.teams.ao.AppSettings;
 import com.microsoft.teams.ao.TeamsAtlasUser;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 @Named
 @Component
