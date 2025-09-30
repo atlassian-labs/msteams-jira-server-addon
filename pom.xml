@@ -49,6 +49,10 @@
             <name>maven-central-snapshot</name>
             <url>https://packages.atlassian.com/maven-external/</url>
         </repository>
+        <repository>
+            <id>repo.jenkins-ci.org</id>
+            <url>https://repo.jenkins-ci.org/public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
